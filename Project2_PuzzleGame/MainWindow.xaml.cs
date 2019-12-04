@@ -27,22 +27,31 @@ namespace Project2_PuzzleGame
             InitializeComponent();
         }
 
+        const int _size = 3; //adjust your number of row and col here
+
+        Image[,] image_cropped = new Image[3,3];
+        int[,] _imageCheck = new int[_size,_size];
+        bool _isDragging = false;
+        Image _selectedBitmap = null;
+        Point _lastPosition;
+        Point _lastPosition2;
+        const int startX = 30;
+        const int startY = 30;
+        const int width = 100;
+        const int height = 100;
         private void chooseImage_Button_Click(object sender, RoutedEventArgs e)
         {
             var screen = new OpenFileDialog();
 
             if (screen.ShowDialog() == true)
             {
-                const int startX = 30;
-                const int startY = 30;
-                const int width = 100;
-                const int height = 100;
+                
                 var source = new BitmapImage(
                     new Uri(screen.FileName, UriKind.Absolute));
                 Debug.WriteLine($"{source.Width} - {source.Height}");
 
                 previewImage.Width = 350;
-                previewImage.Height = 300;
+                previewImage.Height = 280;
                 previewImage.Source = source;
 
                 Canvas.SetLeft(previewImage, 0);
@@ -68,16 +77,83 @@ namespace Project2_PuzzleGame
                             cropImage.Width = width;
                             cropImage.Height = height;
                             cropImage.Source = cropBitmap;
+                            image_cropped[i, j] = cropImage;
                             canvas.Children.Add(cropImage);
                             Canvas.SetLeft(cropImage, startX + j * (width + 2));
                             Canvas.SetTop(cropImage, startY + i * (height + 2));
 
+                            cropImage.MouseLeftButtonDown += CropImage_MouseLeftButtonDown;
+                            cropImage.PreviewMouseLeftButtonUp += CropImage_PreviewMouseLeftButtonUp;
                             cropImage.Tag = new Tuple<int, int>(i, j);
                             //cropImage.MouseLeftButtonUp
+
+                            
                         }
+
+                        //image 8 is empty (_imageCheck[2,2] = 8)
+                        _imageCheck[i, j] = _size * i + j;
                     }
                 }
 
+            }
+        }
+
+        private void CropImage_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            _isDragging = false;
+            var position = e.GetPosition(this);
+
+            int x = (int)(position.X - startX) / (width + 2) * (width + 2) + startX;
+            int y = (int)(position.Y - startY) / (height + 2) * (height + 2) + startY;
+
+            bool isValidDrag = true;
+            if (((int)position.X < startX) || ((int)position.X > startX + width * 3 + 4))
+                isValidDrag = false;
+            if (((int)position.Y < startY) || ((int)position.Y > startY + height * 3 + 4))
+                isValidDrag = false;
+
+            if (!isValidDrag)
+            {
+                x = (int)(_lastPosition2.X - startX) / (width + 2) * (width + 2) + startX;
+                y = (int)(_lastPosition2.Y - startY) / (height + 2) * (height + 2) + startY;
+            }
+
+            Canvas.SetLeft(_selectedBitmap, x);
+            Canvas.SetTop(_selectedBitmap, y);
+            var image = sender as Image;
+            var (i, j) = image.Tag as Tuple<int, int>;
+
+            //MessageBox.Show($"{i} - {j}");
+        }
+
+        private void CropImage_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            _isDragging = true;
+            _selectedBitmap = sender as Image;
+            _lastPosition = e.GetPosition(this);
+            _lastPosition2 = e.GetPosition(this);
+        }
+
+        private void Window_MouseMove(object sender, MouseEventArgs e)
+        {
+            var position = e.GetPosition(this);
+
+            int i = ((int)position.Y - startY) / height;
+            int j = ((int)position.X - startX) / width;
+
+            this.Title = $"{position.X} - {position.Y}, a[{i}][{j}]";
+
+            if (_isDragging)
+            {
+                var dx = position.X - _lastPosition.X;
+                var dy = position.Y - _lastPosition.Y;
+
+                var lastLeft = Canvas.GetLeft(_selectedBitmap);
+                var lastTop = Canvas.GetTop(_selectedBitmap);
+                Canvas.SetLeft(_selectedBitmap, lastLeft + dx);
+                Canvas.SetTop(_selectedBitmap, lastTop + dy);
+
+                _lastPosition = position;
             }
         }
 
@@ -86,5 +162,27 @@ namespace Project2_PuzzleGame
             MessageBox.Show("8 Puzzle Game\n1712472 - Lo Huy Hung\n1712555 - Chau Vinh Lap","Information");
 
         }
+
+        private void Up_Key_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void Down_Key_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void Left_Key_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void Right_Key_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+       
     }
 }
