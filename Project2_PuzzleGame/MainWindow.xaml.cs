@@ -54,7 +54,7 @@ namespace Project2_PuzzleGame
                 previewImage.Height = 280;
                 previewImage.Source = source;
 
-                Canvas.SetLeft(previewImage, 0);
+                Canvas.SetLeft(previewImage, 400);
                 Canvas.SetTop(previewImage, 0);
 
                 // Bat dau cat thanh 9 manh
@@ -68,7 +68,7 @@ namespace Project2_PuzzleGame
                             var h = (int)source.Height/3;
                             var w = (int)source.Height/3;
                             //Debug.WriteLine($"Len = {len}");
-                            var rect = new Int32Rect(j * w, i * h, w, h);
+                            var rect = new Int32Rect(i * w, j * h, w, h);
                             var cropBitmap = new CroppedBitmap(source,
                                 rect);
 
@@ -79,51 +79,82 @@ namespace Project2_PuzzleGame
                             cropImage.Source = cropBitmap;
                             image_cropped[i, j] = cropImage;
                             canvas.Children.Add(cropImage);
-                            Canvas.SetLeft(cropImage, startX + j * (width + 2));
-                            Canvas.SetTop(cropImage, startY + i * (height + 2));
+                            Canvas.SetLeft(cropImage, startX + i * (width + 2));
+                            Canvas.SetTop(cropImage, startY + j * (height + 2));
 
                             cropImage.MouseLeftButtonDown += CropImage_MouseLeftButtonDown;
                             cropImage.PreviewMouseLeftButtonUp += CropImage_PreviewMouseLeftButtonUp;
                             cropImage.Tag = new Tuple<int, int>(i, j);
                             //cropImage.MouseLeftButtonUp
+                            _imageCheck[i, j] = _size * i + j;
 
-                            
                         }
 
-                        //image 8 is empty (_imageCheck[2,2] = 8)
-                        _imageCheck[i, j] = _size * i + j;
+
+
+                        // MessageBox.Show($"{_imageCheck[0,0] } {_imageCheck[0,1] } {_imageCheck[0,2] } \n {_imageCheck[1,0] } {_imageCheck[1,1] } {_imageCheck[1,2] } \n {_imageCheck[2,0] } {_imageCheck[2,1] } {_imageCheck[2,2] }");
                     }
                 }
-
+                //the empty image is marked -1 value
+                _imageCheck[2, 2] = -1;
             }
+            
         }
 
         private void CropImage_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             _isDragging = false;
             var position = e.GetPosition(this);
-
+            var image = sender as Image;
+            var (i, j) = image.Tag as Tuple<int, int>; //i,j: position of selected bitmap on 2 dimensions array
             int x = (int)(position.X - startX) / (width + 2) * (width + 2) + startX;
             int y = (int)(position.Y - startY) / (height + 2) * (height + 2) + startY;
+            int pos_x, pos_y;
+            pos_x = (x - startX) / (width + 2);
+            pos_y = (y - startY) / (height + 2);
 
             bool isValidDrag = true;
-            if (((int)position.X < startX) || ((int)position.X > startX + width * 3 + 4))
+            if (((int)position.X < startX) || ((int)position.X > startX + width * 3 + 6))
                 isValidDrag = false;
-            if (((int)position.Y < startY) || ((int)position.Y > startY + height * 3 + 4))
+            if (((int)position.Y < startY) || ((int)position.Y > startY + height * 3 + 6))
+                isValidDrag = false;
+            if (isValidDrag && _imageCheck[pos_x, pos_y] != -1)
                 isValidDrag = false;
 
             if (!isValidDrag)
             {
                 x = (int)(_lastPosition2.X - startX) / (width + 2) * (width + 2) + startX;
                 y = (int)(_lastPosition2.Y - startY) / (height + 2) * (height + 2) + startY;
+                pos_x = (x - startX) / (width + 2);
+                pos_y = (y - startY) / (height + 2);
             }
+
+            //MessageBox.Show($"{_imageCheck[pos_x, pos_y]}");
+
+            //pos_x = (x - startX) / (width + 2);
+            //pos_y = (y - startY) / (height + 2);
+            MessageBox.Show($"{_imageCheck[0, 0] } {_imageCheck[0, 1] } {_imageCheck[0, 2] } \n {_imageCheck[1, 0] } {_imageCheck[1, 1] } {_imageCheck[1, 2] } \n {_imageCheck[2, 0] } {_imageCheck[2, 1] } {_imageCheck[2, 2] }");
+
+            Swap(ref _imageCheck[pos_x, pos_y],ref _imageCheck[i, j]);
+            MessageBox.Show($"{_imageCheck[0, 0] } {_imageCheck[0, 1] } {_imageCheck[0, 2] } \n {_imageCheck[1, 0] } {_imageCheck[1, 1] } {_imageCheck[1, 2] } \n {_imageCheck[2, 0] } {_imageCheck[2, 1] } {_imageCheck[2, 2] }");
+
+
+            //MessageBox.Show($"{_imageCheck[pos_x, pos_y]}");
+            //MessageBox.Show($"{_imageCheck[i, j]}");
 
             Canvas.SetLeft(_selectedBitmap, x);
             Canvas.SetTop(_selectedBitmap, y);
-            var image = sender as Image;
-            var (i, j) = image.Tag as Tuple<int, int>;
+            
 
-            //MessageBox.Show($"{i} - {j}");
+
+           // MessageBox.Show($"{i} - {j}");
+        }
+
+        static void Swap<T>(ref T x, ref T y)
+        {
+            T t = y;
+            y = x;
+            x = t;
         }
 
         private void CropImage_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
