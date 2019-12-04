@@ -29,8 +29,8 @@ namespace Project2_PuzzleGame
 
         const int _size = 3; //adjust your number of row and col here
 
-        Image[,] image_cropped = new Image[3,3];
-        int[,] _imageCheck = new int[_size,_size];
+        Image[,] image_cropped = new Image[_size, _size];
+        int[,] _imageCheck = new int[_size, _size];
         bool _isDragging = false;
         Image _selectedBitmap = null;
         Point _lastPosition;
@@ -45,7 +45,7 @@ namespace Project2_PuzzleGame
 
             if (screen.ShowDialog() == true)
             {
-                
+
                 var source = new BitmapImage(
                     new Uri(screen.FileName, UriKind.Absolute));
                 Debug.WriteLine($"{source.Width} - {source.Height}");
@@ -65,10 +65,10 @@ namespace Project2_PuzzleGame
                     {
                         if (!((i == 2) && (j == 2)))
                         {
-                            var h = (int)source.Height/3;
-                            var w = (int)source.Height/3;
+                            var h = (int)source.Height / 3;
+                            var w = (int)source.Height / 3;
                             //Debug.WriteLine($"Len = {len}");
-                            var rect = new Int32Rect(j * w, i * h, w, h);
+                            var rect = new Int32Rect(i * w, j * h, w, h);
                             var cropBitmap = new CroppedBitmap(source,
                                 rect);
 
@@ -79,15 +79,15 @@ namespace Project2_PuzzleGame
                             cropImage.Source = cropBitmap;
                             image_cropped[i, j] = cropImage;
                             canvas.Children.Add(cropImage);
-                            Canvas.SetLeft(cropImage, startX + j * (width + 2));
-                            Canvas.SetTop(cropImage, startY + i * (height + 2));
+                            Canvas.SetLeft(cropImage, startX + i * (width + 2));
+                            Canvas.SetTop(cropImage, startY + j * (height + 2));
 
                             cropImage.MouseLeftButtonDown += CropImage_MouseLeftButtonDown;
                             cropImage.PreviewMouseLeftButtonUp += CropImage_PreviewMouseLeftButtonUp;
                             cropImage.Tag = new Tuple<int, int>(i, j);
                             //cropImage.MouseLeftButtonUp
 
-                            
+
                         }
 
                         //image 8 is empty (_imageCheck[2,2] = 8)
@@ -159,7 +159,7 @@ namespace Project2_PuzzleGame
 
         private void Information_click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("8 Puzzle Game\n1712472 - Lo Huy Hung\n1712555 - Chau Vinh Lap","Information");
+            MessageBox.Show("8 Puzzle Game\n1712472 - Lo Huy Hung\n1712555 - Chau Vinh Lap", "Information");
 
         }
 
@@ -183,6 +183,90 @@ namespace Project2_PuzzleGame
 
         }
 
-       
+        private void Window_KeyDown(object sender, KeyEventArgs e)
+        {
+            var empty_pos = emptyPos(_imageCheck, _size);
+            int i = empty_pos.Item1;
+            int j = empty_pos.Item2;
+            if (e.Key == Key.Up)
+            {
+                if (j + 1 < 3)
+                {
+                    _selectedBitmap = image_cropped[i, j + 1];
+                    int x = i * (width + 2) + startX;
+                    int y = j * (height + 2) + startY;
+                    //_imageCheck
+                    Swap<int>(ref _imageCheck[i, j], ref _imageCheck[i, j + 1]);
+                    Swap<Image>(ref image_cropped[i, j], ref image_cropped[i, j + 1]);
+
+                    Canvas.SetLeft(_selectedBitmap, x);
+                    Canvas.SetTop(_selectedBitmap, y);
+                }
+            }
+            if (e.Key == Key.Down)
+            {
+                if (j - 1 >= 0)
+                {
+                    _selectedBitmap = image_cropped[i, j - 1];
+                    int x = i * (width + 2) + startX;
+                    int y = j * (height + 2) + startY;
+                    //_imageCheck
+                    Swap<int>(ref _imageCheck[i, j], ref _imageCheck[i, j - 1]);
+                    Swap<Image>(ref image_cropped[i, j], ref image_cropped[i, j - 1]);
+                    Canvas.SetLeft(_selectedBitmap, x);
+                    Canvas.SetTop(_selectedBitmap, y);
+                }
+            }
+            if (e.Key == Key.Left)
+            {
+                if (i + 1 < 3)
+                {
+                    _selectedBitmap = image_cropped[i + 1, j];
+                    int x = i * (width + 2) + startX;
+                    int y = j * (height + 2) + startY;
+                    //_imageCheck
+                    Swap<int>(ref _imageCheck[i, j], ref _imageCheck[i + 1, j]);
+                    Swap<Image>(ref image_cropped[i, j], ref image_cropped[i + 1, j]);
+                    Canvas.SetLeft(_selectedBitmap, x);
+                    Canvas.SetTop(_selectedBitmap, y);
+                }
+            }
+            if (e.Key == Key.Right)
+            {
+                if (i - 1 >= 0)
+                {
+                    _selectedBitmap = image_cropped[i - 1, j];
+                    int x = i * (width + 2) + startX;
+                    int y = j * (height + 2) + startY;
+                    //_imageCheck
+                    Swap<int>(ref _imageCheck[i, j], ref _imageCheck[i - 1, j]);
+                    Swap<Image>(ref image_cropped[i, j], ref image_cropped[i - 1, j]);
+                    Canvas.SetLeft(_selectedBitmap, x);
+                    Canvas.SetTop(_selectedBitmap, y);
+                }
+            }
+
+        }
+
+        private static Tuple<int, int> emptyPos(int[,] a, int size)
+        {
+            for (int i = 0; i < size; i++)
+            {
+                for (int j = 0; j < size; j++)
+                {
+                    if (a[i, j] == 8)
+                        return Tuple.Create(i, j);
+                }
+            }
+            return null;
+        }
+
+        static void Swap<T>(ref T x, ref T y)
+        {
+            T t = y;
+            y = x;
+            x = t;
+        }
+
     }
 }
