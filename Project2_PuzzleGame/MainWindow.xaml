@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Project2_PuzzleGame"
         mc:Ignorable="d"
+        KeyDown="Window_KeyDown"
         Title="MainWindow" Height="450" Width="800" MouseMove="Window_MouseMove">
     <Canvas Name="canvas">
         <Menu Margin=" 5 5 0 0" BorderBrush="Black" BorderThickness="1" >
