@@ -286,10 +286,7 @@ namespace Project2_PuzzleGame
                     if (a[i, j] == -1)
                         return Tuple.Create(i, j);
                 }
-                if(checkWin(_imageCheck,_size))
-                {
-                    MessageBox.Show("You Win!");
-                }
+                
             }
             return null;
         }
@@ -318,33 +315,45 @@ namespace Project2_PuzzleGame
         
 
         private void Shuffle_Click(object sender, RoutedEventArgs e)
-        {
-            
+        { 
             var random = new Random();
-            for (int i=0;i<128;i++)
+            bool isShuffle = false;
+            do
             {
-                int x= random.Next(2000);
-                x %= 4;
-                if(x == 0)
+                for (int i = 0; i < 128; i++)
                 {
-                    MoveUp();
+                    int x = random.Next(2000);
+                    x %= 4;
+                    if (x == 0)
+                    {
+                        MoveUp();
+                    }
+                    if (x == 1)
+                    {
+                        MoveLeft();
+                    }
+                    if (x == 2)
+                    {
+                        MoveRight();
+                    }
+                    if (x == 3)
+                    {
+                        MoveDown();
+                    }
+
+                    int count = 0;
+                    for(int j=0;i<_size;i++)
+                    {
+                        if (_imageCheck[0, j] == j)
+                            count++;
+                    }
+                    if (count == _size) isShuffle = true;
+                    else isShuffle = false;
                 }
-                if (x == 1)
-                {
-                    MoveLeft();
-                }
-                if (x == 2)
-                {
-                    MoveRight();
-                }
-                if (x == 3)
-                {
-                    MoveDown();
-                }
-            }
+            } while (isShuffle);
         }
 
-        private bool checkWin(int[,]a,int size)
+        private static bool checkWin(int[,]a,int size)
         {
             for (int i = 0; i < size; i++)
             {
