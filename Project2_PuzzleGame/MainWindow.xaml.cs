@@ -126,18 +126,20 @@ namespace Project2_PuzzleGame
             {
                 x = (int)(_lastPosition2.X - startX) / (width + 2) * (width + 2) + startX;
                 y = (int)(_lastPosition2.Y - startY) / (height + 2) * (height + 2) + startY;
-                pos_x = (x - startX) / (width + 2);
-                pos_y = (y - startY) / (height + 2);
+                //pos_x = (x - startX) / (width + 2);
+                //pos_y = (y - startY) / (height + 2);
             }
+            else Swap<int>(ref _imageCheck[pos_x, pos_y], ref _imageCheck[i, j]);
+
 
             //MessageBox.Show($"{_imageCheck[pos_x, pos_y]}");
 
             //pos_x = (x - startX) / (width + 2);
             //pos_y = (y - startY) / (height + 2);
-            MessageBox.Show($"{_imageCheck[0, 0] } {_imageCheck[0, 1] } {_imageCheck[0, 2] } \n {_imageCheck[1, 0] } {_imageCheck[1, 1] } {_imageCheck[1, 2] } \n {_imageCheck[2, 0] } {_imageCheck[2, 1] } {_imageCheck[2, 2] }");
+            //MessageBox.Show($"{_imageCheck[0, 0] } {_imageCheck[0, 1] } {_imageCheck[0, 2] } \n {_imageCheck[1, 0] } {_imageCheck[1, 1] } {_imageCheck[1, 2] } \n {_imageCheck[2, 0] } {_imageCheck[2, 1] } {_imageCheck[2, 2] }");
 
-            Swap(ref _imageCheck[pos_x, pos_y],ref _imageCheck[i, j]);
-            MessageBox.Show($"{_imageCheck[0, 0] } {_imageCheck[0, 1] } {_imageCheck[0, 2] } \n {_imageCheck[1, 0] } {_imageCheck[1, 1] } {_imageCheck[1, 2] } \n {_imageCheck[2, 0] } {_imageCheck[2, 1] } {_imageCheck[2, 2] }");
+
+            //MessageBox.Show($"{_imageCheck[0, 0] } {_imageCheck[0, 1] } {_imageCheck[0, 2] } \n {_imageCheck[1, 0] } {_imageCheck[1, 1] } {_imageCheck[1, 2] } \n {_imageCheck[2, 0] } {_imageCheck[2, 1] } {_imageCheck[2, 2] }");
 
 
             //MessageBox.Show($"{_imageCheck[pos_x, pos_y]}");
@@ -195,89 +197,80 @@ namespace Project2_PuzzleGame
 
         }
 
-        private void Up_Key_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void Down_Key_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void Left_Key_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void Right_Key_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void Window_KeyDown(object sender, KeyEventArgs e)
+        private void MoveUp()
         {
             var empty_pos = emptyPos(_imageCheck, _size);
             int i = empty_pos.Item1;
             int j = empty_pos.Item2;
-            if (e.Key == Key.Up)
-            {
-                if (j + 1 < 3)
-                {
-                    _selectedBitmap = image_cropped[i, j + 1];
-                    int x = i * (width + 2) + startX;
-                    int y = j * (height + 2) + startY;
-                    //_imageCheck
-                    Swap<int>(ref _imageCheck[i, j], ref _imageCheck[i, j + 1]);
-                    Swap<Image>(ref image_cropped[i, j], ref image_cropped[i, j + 1]);
 
-                    Canvas.SetLeft(_selectedBitmap, x);
-                    Canvas.SetTop(_selectedBitmap, y);
-                }
-            }
-            if (e.Key == Key.Down)
+            if (j + 1 < _size)
             {
-                if (j - 1 >= 0)
-                {
-                    _selectedBitmap = image_cropped[i, j - 1];
-                    int x = i * (width + 2) + startX;
-                    int y = j * (height + 2) + startY;
-                    //_imageCheck
-                    Swap<int>(ref _imageCheck[i, j], ref _imageCheck[i, j - 1]);
-                    Swap<Image>(ref image_cropped[i, j], ref image_cropped[i, j - 1]);
-                    Canvas.SetLeft(_selectedBitmap, x);
-                    Canvas.SetTop(_selectedBitmap, y);
-                }
-            }
-            if (e.Key == Key.Left)
-            {
-                if (i + 1 < 3)
-                {
-                    _selectedBitmap = image_cropped[i + 1, j];
-                    int x = i * (width + 2) + startX;
-                    int y = j * (height + 2) + startY;
-                    //_imageCheck
-                    Swap<int>(ref _imageCheck[i, j], ref _imageCheck[i + 1, j]);
-                    Swap<Image>(ref image_cropped[i, j], ref image_cropped[i + 1, j]);
-                    Canvas.SetLeft(_selectedBitmap, x);
-                    Canvas.SetTop(_selectedBitmap, y);
-                }
-            }
-            if (e.Key == Key.Right)
-            {
-                if (i - 1 >= 0)
-                {
-                    _selectedBitmap = image_cropped[i - 1, j];
-                    int x = i * (width + 2) + startX;
-                    int y = j * (height + 2) + startY;
-                    //_imageCheck
-                    Swap<int>(ref _imageCheck[i, j], ref _imageCheck[i - 1, j]);
-                    Swap<Image>(ref image_cropped[i, j], ref image_cropped[i - 1, j]);
-                    Canvas.SetLeft(_selectedBitmap, x);
-                    Canvas.SetTop(_selectedBitmap, y);
-                }
-            }
+                _selectedBitmap = image_cropped[i, j + 1];
+                int x = i * (width + 2) + startX;
+                int y = j * (height + 2) + startY;
+                //_imageCheck
+                Swap<int>(ref _imageCheck[i, j], ref _imageCheck[i, j + 1]);
+                Swap<Image>(ref image_cropped[i, j], ref image_cropped[i, j + 1]);
 
+                Canvas.SetLeft(_selectedBitmap, x);
+                Canvas.SetTop(_selectedBitmap, y);
+            }
+        }
+
+        private void MoveDown()
+        {
+            var empty_pos = emptyPos(_imageCheck, _size);
+            int i = empty_pos.Item1;
+            int j = empty_pos.Item2;
+
+            if (j - 1 >= 0)
+            {
+                _selectedBitmap = image_cropped[i, j - 1];
+                int x = i * (width + 2) + startX;
+                int y = j * (height + 2) + startY;
+                //_imageCheck
+                Swap<int>(ref _imageCheck[i, j], ref _imageCheck[i, j - 1]);
+                Swap<Image>(ref image_cropped[i, j], ref image_cropped[i, j - 1]);
+                Canvas.SetLeft(_selectedBitmap, x);
+                Canvas.SetTop(_selectedBitmap, y);
+            }
+        }
+
+        private void MoveLeft()
+        {
+            var empty_pos = emptyPos(_imageCheck, _size);
+            int i = empty_pos.Item1;
+            int j = empty_pos.Item2;
+            if (i + 1 < _size)
+            {
+                _selectedBitmap = image_cropped[i + 1, j];
+                int x = i * (width + 2) + startX;
+                int y = j * (height + 2) + startY;
+                //_imageCheck
+                Swap<int>(ref _imageCheck[i, j], ref _imageCheck[i + 1, j]);
+                Swap<Image>(ref image_cropped[i, j], ref image_cropped[i + 1, j]);
+                Canvas.SetLeft(_selectedBitmap, x);
+                Canvas.SetTop(_selectedBitmap, y);
+            }
+        }
+
+        private void MoveRight()
+        {
+            var empty_pos = emptyPos(_imageCheck, _size);
+            int i = empty_pos.Item1;
+            int j = empty_pos.Item2;
+
+            if (i-1 >= 0)
+            {
+                _selectedBitmap = image_cropped[i - 1, j];
+                int x = i * (width + 2) + startX;
+                int y = j * (height + 2) + startY;
+                //_imageCheck
+                Swap<int>(ref _imageCheck[i, j], ref _imageCheck[i - 1, j]);
+                Swap<Image>(ref image_cropped[i, j], ref image_cropped[i - 1, j]);
+                Canvas.SetLeft(_selectedBitmap, x);
+                Canvas.SetTop(_selectedBitmap, y);
+            }
         }
 
         private static Tuple<int, int> emptyPos(int[,] a, int size)
@@ -286,19 +279,62 @@ namespace Project2_PuzzleGame
             {
                 for (int j = 0; j < size; j++)
                 {
-                    if (a[i, j] == 8)
+                    if (a[i, j] == -1)
                         return Tuple.Create(i, j);
                 }
             }
             return null;
         }
 
-        static void Swap<T>(ref T x, ref T y)
+        private void Window_KeyDown(object sender, KeyEventArgs e)
         {
-            T t = y;
-            y = x;
-            x = t;
+            if (e.Key == Key.Up)
+            {
+                MoveUp();
+            }
+            if (e.Key == Key.Down)
+            {
+                MoveDown();
+            }
+            if (e.Key == Key.Left)
+            {
+                MoveLeft();
+            }
+            if (e.Key == Key.Right)
+            {
+                MoveRight();
+            }
+
         }
 
+        
+
+        private void Shuffle_Click(object sender, RoutedEventArgs e)
+        {
+            
+            var random = new Random();
+            for (int i=0;i<128;i++)
+            {
+                int x= random.Next(2000);
+                x %= 4;
+                if(x == 0)
+                {
+                    MoveUp();
+                }
+                if (x == 1)
+                {
+                    MoveLeft();
+                }
+                if (x == 2)
+                {
+                    MoveRight();
+                }
+                if (x == 3)
+                {
+                    MoveDown();
+                }
+            }
+        }
     }
 }
+
