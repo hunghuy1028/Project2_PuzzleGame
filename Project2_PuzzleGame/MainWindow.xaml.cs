@@ -87,13 +87,7 @@ namespace Project2_PuzzleGame
                             cropImage.Tag = new Tuple<int, int>(i, j);
                             //cropImage.MouseLeftButtonUp
                             _imageCheck[i, j] = _size * i + j;
-
-
                         }
-
-
-
-                        // MessageBox.Show($"{_imageCheck[0,0] } {_imageCheck[0,1] } {_imageCheck[0,2] } \n {_imageCheck[1,0] } {_imageCheck[1,1] } {_imageCheck[1,2] } \n {_imageCheck[2,0] } {_imageCheck[2,1] } {_imageCheck[2,2] }");
                     }
                 }
                 //the empty image is marked -1 value
@@ -110,47 +104,57 @@ namespace Project2_PuzzleGame
             var (i, j) = image.Tag as Tuple<int, int>; //i,j: position of selected bitmap on 2 dimensions array
             int x = (int)(position.X - startX) / (width + 2) * (width + 2) + startX;
             int y = (int)(position.Y - startY) / (height + 2) * (height + 2) + startY;
-            int pos_x, pos_y;
+            int pos_x, pos_y, pos_x1, pos_y1;
+
             pos_x = (x - startX) / (width + 2);
             pos_y = (y - startY) / (height + 2);
 
-            bool isValidDrag = true;
-            if (((int)position.X < startX) || ((int)position.X > startX + width * 3 + 6))
+            pos_x1 = (int)(_lastPosition2.X - startX) / (width + 2);
+            pos_y1 = (int)(_lastPosition2.Y - startY) / (height + 2);
+
+            bool isValidDrag;
+            if (pos_x < _size && pos_y < _size)
+            {
+                isValidDrag = true;
+                if (_imageCheck[pos_x, pos_y] == -1)
+                {
+                    isValidDrag = true;
+                    if ((Math.Abs(pos_x - pos_x1) < 1 && Math.Abs(pos_y - pos_y1) < 2) || (Math.Abs(pos_x - pos_x1) < 2 && Math.Abs(pos_y - pos_y1) < 1))
+                        isValidDrag = true;
+                    else
+                    {
+                        isValidDrag = false;
+                    }
+                } 
+                else
+                {
+                    isValidDrag = false;
+                }
+            } 
+            else
+            {
                 isValidDrag = false;
-            if (((int)position.Y < startY) || ((int)position.Y > startY + height * 3 + 6))
-                isValidDrag = false;
-            if (isValidDrag && _imageCheck[pos_x, pos_y] != -1)
-                isValidDrag = false;
+            }
 
             if (!isValidDrag)
             {
                 x = (int)(_lastPosition2.X - startX) / (width + 2) * (width + 2) + startX;
                 y = (int)(_lastPosition2.Y - startY) / (height + 2) * (height + 2) + startY;
-                //pos_x = (x - startX) / (width + 2);
-                //pos_y = (y - startY) / (height + 2);
             }
-            else Swap<int>(ref _imageCheck[pos_x, pos_y], ref _imageCheck[i, j]);
-
-
-            //MessageBox.Show($"{_imageCheck[pos_x, pos_y]}");
-
-            //pos_x = (x - startX) / (width + 2);
-            //pos_y = (y - startY) / (height + 2);
-            //MessageBox.Show($"{_imageCheck[0, 0] } {_imageCheck[0, 1] } {_imageCheck[0, 2] } \n {_imageCheck[1, 0] } {_imageCheck[1, 1] } {_imageCheck[1, 2] } \n {_imageCheck[2, 0] } {_imageCheck[2, 1] } {_imageCheck[2, 2] }");
-
-
-            //MessageBox.Show($"{_imageCheck[0, 0] } {_imageCheck[0, 1] } {_imageCheck[0, 2] } \n {_imageCheck[1, 0] } {_imageCheck[1, 1] } {_imageCheck[1, 2] } \n {_imageCheck[2, 0] } {_imageCheck[2, 1] } {_imageCheck[2, 2] }");
-
-
-            //MessageBox.Show($"{_imageCheck[pos_x, pos_y]}");
-            //MessageBox.Show($"{_imageCheck[i, j]}");
+            else
+            {
+                Swap(ref _imageCheck[pos_x, pos_y], ref _imageCheck[pos_x1, pos_y1]);
+                Swap<Image>(ref image_cropped[pos_x, pos_y], ref image_cropped[pos_x1, pos_y1]);
+            }
 
             Canvas.SetLeft(_selectedBitmap, x);
             Canvas.SetTop(_selectedBitmap, y);
-            
 
+            if (isValidDrag && checkWin(_imageCheck, _size))
+            {
+                MessageBox.Show("You Win!");
+            }
 
-           // MessageBox.Show($"{i} - {j}");
         }
 
         static void Swap<T>(ref T x, ref T y)
@@ -282,6 +286,10 @@ namespace Project2_PuzzleGame
                     if (a[i, j] == -1)
                         return Tuple.Create(i, j);
                 }
+                if(checkWin(_imageCheck,_size))
+                {
+                    MessageBox.Show("You Win!");
+                }
             }
             return null;
         }
@@ -335,6 +343,23 @@ namespace Project2_PuzzleGame
                 }
             }
         }
+
+        private bool checkWin(int[,]a,int size)
+        {
+            for (int i = 0; i < size; i++)
+            {
+                for (int j = 0; j < size; j++)
+                {
+                    if (i == size - 1 && j == size - 1)
+                        return true;
+                    if (a[i, j] != _size * i + j)
+                        return false;
+                }
+            }
+            return true;
+        }
+
+
     }
 }
 
