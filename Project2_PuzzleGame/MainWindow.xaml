@@ -11,6 +11,8 @@
         <Menu Margin=" 5 5 0 0" BorderBrush="Black" BorderThickness="1" >
             <MenuItem Header="Choose Image" Click="chooseImage_Button_Click" BorderBrush="Black" BorderThickness="1"></MenuItem>
             <MenuItem Header="Information" Click="Information_click" BorderBrush="Black" BorderThickness="1"></MenuItem>
+            <MenuItem Header="Game Mode" Click="" BorderBrush="Black" BorderThickness="1">
+            </MenuItem>
         </Menu>
         <Image x:Name="previewImage"></Image>
         <Label x:Name="Timing" Content="00:00:00" Foreground="Red" Canvas.Left="512" Canvas.Top="296" Width="104" FontSize="25"></Label>

@@ -183,7 +183,7 @@ namespace Project2_PuzzleGame
             }
             else
             {
-                MessageBox.Show("You can play after click shuffle button", "Play");
+                MessageBox.Show("You can only play after shuffle", "Play");
             }
             
         }
@@ -356,16 +356,15 @@ namespace Project2_PuzzleGame
                     {
                         MoveDown();
                     }
-
-                    int count = 0;
-                    for(int j=0;i<_size;i++)
-                    {
-                        if (_imageCheck[0, j] == j)
-                            count++;
-                    }
-                    if (count == _size) isShuffle = true;
-                    else isShuffle = false;
                 }
+                int count = 0;
+                for (int j = 0; j < _size; j++)
+                {
+                    if (_imageCheck[0, j] == j)
+                        count++;
+                }
+                if (count == _size) isShuffle = true;
+                else isShuffle = false;
             } while (isShuffle);
             _canPlay = true;
         }
