@@ -340,16 +340,14 @@ namespace Project2_PuzzleGame
                     {
                         MoveDown();
                     }
-
-                    int count = 0;
-                    for(int j=0;i<_size;i++)
-                    {
-                        if (_imageCheck[0, j] == j)
-                            count++;
-                    }
-                    if (count == _size) isShuffle = true;
-                    else isShuffle = false;
                 }
+                int count = 0;
+                for (int j = 0; j < _size; j++)
+                {
+                    if (_imageCheck[0, j] == j)
+                        count++;
+                }
+                if (count == _size) isShuffle = true;
             } while (isShuffle);
         }
 
@@ -368,7 +366,5 @@ namespace Project2_PuzzleGame
             return true;
         }
 
-
     }
 }
-
