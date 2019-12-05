@@ -309,23 +309,30 @@ namespace Project2_PuzzleGame
 
         private void Window_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Up)
+            if(_canPlay)
             {
-                MoveUp();
+                if (e.Key == Key.Up)
+                {
+                    MoveUp();
+                }
+                if (e.Key == Key.Down)
+                {
+                    MoveDown();
+                }
+                if (e.Key == Key.Left)
+                {
+                    MoveLeft();
+                }
+                if (e.Key == Key.Right)
+                {
+                    MoveRight();
+                }
+                if (checkWin(_imageCheck, _size))
+                {
+                    StopTime();
+                    MessageBox.Show("You Win!");
+                }
             }
-            if (e.Key == Key.Down)
-            {
-                MoveDown();
-            }
-            if (e.Key == Key.Left)
-            {
-                MoveLeft();
-            }
-            if (e.Key == Key.Right)
-            {
-                MoveRight();
-            }
-
         }
 
         
@@ -419,4 +426,3 @@ namespace Project2_PuzzleGame
 
     }
 }
-
