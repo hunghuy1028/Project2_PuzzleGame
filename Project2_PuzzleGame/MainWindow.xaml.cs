@@ -14,6 +14,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 
 namespace Project2_PuzzleGame
 {
@@ -32,6 +33,7 @@ namespace Project2_PuzzleGame
         Image[,] image_cropped = new Image[_size, _size];
         int[,] _imageCheck = new int[_size, _size];
         bool _isDragging = false;
+        bool _canPlay = false;
         Image _selectedBitmap = null;
         Point _lastPosition;
         Point _lastPosition2;
@@ -39,6 +41,10 @@ namespace Project2_PuzzleGame
         const int startY = 30;
         const int width = 100;
         const int height = 100;
+
+        DispatcherTimer dispatcherTimer = new DispatcherTimer();
+        Stopwatch stopWatch = new Stopwatch();
+        string currentTime = string.Empty;
         private void chooseImage_Button_Click(object sender, RoutedEventArgs e)
         {
             var screen = new OpenFileDialog();
@@ -152,6 +158,7 @@ namespace Project2_PuzzleGame
 
             if (isValidDrag && checkWin(_imageCheck, _size))
             {
+                StopTime();
                 MessageBox.Show("You Win!");
             }
 
@@ -166,10 +173,19 @@ namespace Project2_PuzzleGame
 
         private void CropImage_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            _isDragging = true;
-            _selectedBitmap = sender as Image;
-            _lastPosition = e.GetPosition(this);
-            _lastPosition2 = e.GetPosition(this);
+            if (_canPlay)
+            {
+                _isDragging = true;
+                _selectedBitmap = sender as Image;
+                _lastPosition = e.GetPosition(this);
+                _lastPosition2 = e.GetPosition(this);
+                Start_Click(sender, e);
+            }
+            else
+            {
+                MessageBox.Show("You can play after click shuffle button", "Play");
+            }
+            
         }
 
         private void Window_MouseMove(object sender, MouseEventArgs e)
@@ -349,6 +365,7 @@ namespace Project2_PuzzleGame
                 }
                 if (count == _size) isShuffle = true;
             } while (isShuffle);
+            _canPlay = true;
         }
 
         private static bool checkWin(int[,]a,int size)
@@ -364,6 +381,39 @@ namespace Project2_PuzzleGame
                 }
             }
             return true;
+        }
+
+        
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            dispatcherTimer.Tick += new EventHandler(dt_Tick);
+            dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 1);
+        }
+
+        private void dt_Tick(object sender, EventArgs e)
+        {
+            if (stopWatch.IsRunning)
+            {
+                TimeSpan ts = stopWatch.Elapsed;
+                currentTime = String.Format("{0:00}:{1:00}:{2:00}",
+                ts.Minutes, ts.Seconds, ts.Milliseconds / 10);
+                Timing.Content = currentTime;
+            }
+        }
+
+        private void Start_Click(object sender, RoutedEventArgs e)
+        {
+            stopWatch.Start();
+            dispatcherTimer.Start();
+        }
+
+        private void StopTime()
+        {
+            if (stopWatch.IsRunning)
+            {
+                stopWatch.Stop();
+            }           
         }
 
     }

@@ -6,14 +6,17 @@
         xmlns:local="clr-namespace:Project2_PuzzleGame"
         mc:Ignorable="d"
         KeyDown="Window_KeyDown"
-        Title="MainWindow" Height="450" Width="800" MouseMove="Window_MouseMove">
+        Title="MainWindow" Height="450" Width="800" MouseMove="Window_MouseMove" Loaded="Window_Loaded">
     <Canvas Name="canvas">
         <Menu Margin=" 5 5 0 0" BorderBrush="Black" BorderThickness="1" Focusable="False" FocusVisualStyle="{x:Null}">
             <MenuItem Header="Choose Image" Click="chooseImage_Button_Click" BorderBrush="Black" BorderThickness="1"></MenuItem>
             <MenuItem Header="Information" Click="Information_click" BorderBrush="Black" BorderThickness="1"></MenuItem>
         </Menu>
         <Image x:Name="previewImage"></Image>
+
         <Button Focusable="False" FocusVisualStyle="{x:Null}"  Name="Shuffle" Content="Shuffle" Click="Shuffle_Click" Width="80" Height="25" Canvas.Left="449" Canvas.Top="339"></Button>
+        <Label x:Name="Timing" Content="00:00:00" Foreground="Red" Canvas.Left="512" Canvas.Top="296" Width="104" FontSize="25"></Label>
+        <Button Name="Start" Content="Play" Click="Start_Click" Width="80" Height="25" Canvas.Left="600" Canvas.Top="339"></Button>
     </Canvas>
 
 </Window>
