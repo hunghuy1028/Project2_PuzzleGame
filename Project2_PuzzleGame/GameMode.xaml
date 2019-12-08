@@ -8,7 +8,8 @@
         Title="GameMode" Height="200" Width="300">
     <Canvas>
         <Label Content="Time"></Label>
-        <RadioButton GroupName="TimeMode" IsChecked="True" Content="Unlimited" Canvas.Left="41" Canvas.Top="6"></RadioButton>
-        <RadioButton GroupName="TimeMode" IsChecked="False" Content="3 Minutes" Canvas.Left="41" Canvas.Top="26"></RadioButton>
+        <RadioButton Name="Unlimited" GroupName="TimeMode" Content="Unlimited" Canvas.Left="41" Canvas.Top="6"></RadioButton>
+        <RadioButton Name="Three_Minutes" GroupName="TimeMode" Content="3 Minutes" Canvas.Left="41" Canvas.Top="26"></RadioButton>
+        <Button Name="OK" Click="OK_Click" Content="OK" Width="50" Height="25" Canvas.Left="125" Canvas.Top="100"/>
     </Canvas>
 </Window>

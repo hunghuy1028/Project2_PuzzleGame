@@ -34,6 +34,7 @@ namespace Project2_PuzzleGame
         int[,] _imageCheck = new int[_size, _size];
         bool _isDragging = false;
         bool _canPlay = false;
+        int gameMode = 1;// game mode 1: unlimited, 2: 3 minutes
         Image _selectedBitmap = null;
         Point _lastPosition;
         Point _lastPosition2;
@@ -424,5 +425,18 @@ namespace Project2_PuzzleGame
             }           
         }
 
+        private void GameMode_MenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            var gameModeOptionScreen = new GameMode(gameMode);
+            if (gameModeOptionScreen.ShowDialog() == true)
+            {
+                gameMode = gameModeOptionScreen.myGameMode;
+            }
+            else
+            {
+                Debug.WriteLine("");
+            }
+
+        }
     }
 }

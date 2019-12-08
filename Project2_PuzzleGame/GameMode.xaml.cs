@@ -19,9 +19,28 @@ namespace Project2_PuzzleGame
     /// </summary>
     public partial class GameMode : Window
     {
-        public GameMode()
+        public int myGameMode { get; set; }
+        public GameMode(int gameMode)
         {
             InitializeComponent();
+            if (gameMode == 1)
+                Unlimited.IsChecked = true;
+            else
+                Three_Minutes.IsChecked = true;
+        }
+
+        private void OK_Click(object sender, RoutedEventArgs e)
+        {
+           if(Unlimited.IsChecked==true)
+            {
+                myGameMode = 1;
+            }
+            else
+            {
+                myGameMode = 2;
+            }
+            DialogResult = true;
+            Close();
         }
     }
 }
