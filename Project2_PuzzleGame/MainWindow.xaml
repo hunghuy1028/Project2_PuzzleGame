@@ -11,14 +11,16 @@
         <Menu Margin=" 5 5 0 0" BorderBrush="Black" BorderThickness="1" Focusable="False" FocusVisualStyle="{x:Null}">
             <MenuItem Header="Choose Image" Click="chooseImage_Button_Click" BorderBrush="Black" BorderThickness="1"></MenuItem>
             <MenuItem Header="Information" Click="Information_click" BorderBrush="Black" BorderThickness="1"></MenuItem>
-            <MenuItem Header="Game Mode" Click="GameMode_MenuItem_Click" BorderBrush="Black" BorderThickness="1">
-            </MenuItem>
+            <MenuItem Header="Game Mode" Click="GameMode_MenuItem_Click" BorderBrush="Black" BorderThickness="1"></MenuItem>
+            <MenuItem Header="Save Game" Click="SaveGame_MenuItem_Click" BorderBrush="Black" BorderThickness="1"/>
+            <MenuItem Header="Load Game" Click="LoadGame_MenuItem_Click" BorderBrush="Black" BorderThickness="1"/>
         </Menu>
         <Image x:Name="previewImage"></Image>
 
         <Button Focusable="False" FocusVisualStyle="{x:Null}"  Name="Shuffle" Content="Shuffle" Click="Shuffle_Click" Width="80" Height="25" Canvas.Left="449" Canvas.Top="339"></Button>
         <Label x:Name="Timing" Content="00:00:00" Foreground="Red" Canvas.Left="512" Canvas.Top="296" Width="104" FontSize="25"></Label>
-        <Button Focusable="False" FocusVisualStyle="{x:Null}" Name="Start" Content="Play" Click="Start_Click" Width="80" Height="25" Canvas.Left="600" Canvas.Top="339"></Button>
+        <Button Focusable="False" FocusVisualStyle="{x:Null}" Name="Start" Content="Play" Click="Start_Click" Width="80" Height="25" Canvas.Left="541" Canvas.Top="339"></Button>
+        <Button Name="NewGame" Content="New Game" Click="NewGame_Click" Width="80" Height="25" Focusable="False" FocusVisualStyle="{x:Null}" Canvas.Left="634" Canvas.Top="338"/>
     </Canvas>
 
 </Window>
