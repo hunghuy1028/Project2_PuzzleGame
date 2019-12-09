@@ -54,69 +54,61 @@ namespace Project2_PuzzleGame
         {
             restartbtn(_size);
             var screen = new OpenFileDialog();
+            screen.Filter = "Image files (*.jpg, *.jpeg, *.jpe, *.jfif, *.png) | *.jpg; *.jpeg; *.jpe; *.jfif; *.png";
 
             if (screen.ShowDialog() == true)
             {
+                imgPath = screen.FileName;
+                var source = new BitmapImage(new Uri(screen.FileName, UriKind.Absolute));
+                Debug.WriteLine($"{source.Width} - {source.Height}");
+                newGame_image = source;
+
+                previewImage.Width = 350;
+                previewImage.Height = 280;
+                previewImage.Source = source;
+
+                Canvas.SetLeft(previewImage, 400);
+                Canvas.SetTop(previewImage, 0);
+
+                // Bat dau cat thanh 9 manh
                 try
                 {
-                    imgPath = screen.FileName;
-                    var source = new BitmapImage(
-                        new Uri(screen.FileName, UriKind.Absolute));
-                    Debug.WriteLine($"{source.Width} - {source.Height}");
-                    newGame_image = source;
-
-                    previewImage.Width = 350;
-                    previewImage.Height = 280;
-                    previewImage.Source = source;
-
-                    Canvas.SetLeft(previewImage, 400);
-                    Canvas.SetTop(previewImage, 0);
-
-                    // Bat dau cat thanh 9 manh
-                    try
+                    for (int i = 0; i < _size; i++)
                     {
-                        for (int i = 0; i < _size; i++)
+                        for (int j = 0; j < _size; j++)
                         {
-                            for (int j = 0; j < _size; j++)
+                            if (!((i == _size-1) && (j == _size-1)))
                             {
-                                if (!((i == _size-1) && (j == _size-1)))
-                                {
-                                    var h = (int)source.Height / _size;
-                                    var w = (int)source.Height / _size;
-                                    //Debug.WriteLine($"Len = {len}");
-                                    var rect = new Int32Rect(i * w, j * h, w, h);
-                                    var cropBitmap = new CroppedBitmap(source, rect);
-                                    var cropImage = new Image();
-                                    cropImage.Stretch = Stretch.Fill;
-                                    cropImage.Width = width;
-                                    cropImage.Height = height;
-                                    cropImage.Source = cropBitmap;
-                                    image_cropped[i, j] = cropImage;
-                                    canvas.Children.Add(cropImage);
-                                    Canvas.SetLeft(cropImage, startX + i * (width + 2));
-                                    Canvas.SetTop(cropImage, startY + j * (height + 2));
+                                var h = (int)source.Height / _size;
+                                var w = (int)source.Height / _size;
+                                //Debug.WriteLine($"Len = {len}");
+                                var rect = new Int32Rect(i * w, j * h, w, h);
+                                var cropBitmap = new CroppedBitmap(source, rect);
+                                var cropImage = new Image();
+                                cropImage.Stretch = Stretch.Fill;
+                                cropImage.Width = width;
+                                cropImage.Height = height;
+                                cropImage.Source = cropBitmap;
+                                image_cropped[i, j] = cropImage;
+                                canvas.Children.Add(cropImage);
+                                Canvas.SetLeft(cropImage, startX + i * (width + 2));
+                                Canvas.SetTop(cropImage, startY + j * (height + 2));
 
-                                    cropImage.MouseLeftButtonDown += CropImage_MouseLeftButtonDown;
-                                    cropImage.PreviewMouseLeftButtonUp += CropImage_PreviewMouseLeftButtonUp;
-                                    cropImage.Tag = new Tuple<int, int>(i, j);
-                                    //cropImage.MouseLeftButtonUp
-                                    _imageCheck[i, j] = _size * i + j;
-                                }
+                                cropImage.MouseLeftButtonDown += CropImage_MouseLeftButtonDown;
+                                cropImage.PreviewMouseLeftButtonUp += CropImage_PreviewMouseLeftButtonUp;
+                                cropImage.Tag = new Tuple<int, int>(i, j);
+                                //cropImage.MouseLeftButtonUp
+                                _imageCheck[i, j] = _size * i + j;
                             }
                         }
-                        _canplay = true;
-                        //the empty image is marked -1 value
-                        _imageCheck[_size-1, _size-1] = -1;
                     }
-                    catch
-                    {
-                        MessageBox.Show("Please choose other image", "This image size is small to crop");
-                        _canplay = false;
-                    }
+                    _canplay = true;
+                    //the empty image is marked -1 value
+                    _imageCheck[_size-1, _size-1] = -1;
                 }
                 catch
                 {
-                    MessageBox.Show("Make sure your file open is Image.\nPlease try agian or open other image", "Can't open you Image");
+                    MessageBox.Show("Please choose other image", "This image size is small to crop");
                     _canplay = false;
                 }
             }
