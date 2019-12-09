@@ -38,7 +38,8 @@ namespace Project2_PuzzleGame
         bool _isDragging = false;
         bool _isShuffle = false;
         bool _canplay = true;
-        int gameMode = 1;// game mode 1: unlimited, 2: 3 minutes
+        int time_gameMode = 1;// game mode 1: unlimited, 2: 3 minutes
+        int level_gameMode = 3;// set default game
         Image _selectedBitmap = null;
         Point _lastPosition;
         Point _lastPosition2;
@@ -463,10 +464,11 @@ namespace Project2_PuzzleGame
 
         private void GameMode_MenuItem_Click(object sender, RoutedEventArgs e)
         {
-            var gameModeOptionScreen = new GameMode(gameMode);
+            var gameModeOptionScreen = new GameMode(time_gameMode,level_gameMode);
             if (gameModeOptionScreen.ShowDialog() == true)
             {
-                gameMode = gameModeOptionScreen.myGameMode;
+                time_gameMode = gameModeOptionScreen.Time_GameMode;
+                level_gameMode = gameModeOptionScreen.Level_GameMode;
             }
             else
             {

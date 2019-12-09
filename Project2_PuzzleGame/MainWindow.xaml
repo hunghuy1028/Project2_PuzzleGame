@@ -8,12 +8,12 @@
         KeyDown="Window_KeyDown"
         Title="MainWindow" Height="450" Width="800" MouseMove="Window_MouseMove" Loaded="Window_Loaded">
     <Canvas Name="canvas">
-        <Menu Margin=" 5 5 0 0" BorderBrush="Black" BorderThickness="1" Focusable="False" FocusVisualStyle="{x:Null}">
-            <MenuItem Header="Choose Image" Click="chooseImage_Button_Click" BorderBrush="Black" BorderThickness="1"></MenuItem>
-            <MenuItem Header="Information" Click="Information_click" BorderBrush="Black" BorderThickness="1"></MenuItem>
-            <MenuItem Header="Game Mode" Click="GameMode_MenuItem_Click" BorderBrush="Black" BorderThickness="1"></MenuItem>
-            <MenuItem Header="Save Game" Click="SaveGame_MenuItem_Click" BorderBrush="Black" BorderThickness="1"/>
-            <MenuItem Header="Load Game" Click="LoadGame_MenuItem_Click" BorderBrush="Black" BorderThickness="1"/>
+        <Menu Margin=" 5 5 0 0" BorderBrush="Black" BorderThickness="0.1" Focusable="False" FocusVisualStyle="{x:Null}">
+            <MenuItem Header="Choose Image" Click="chooseImage_Button_Click" BorderBrush="Black" BorderThickness="0.5"></MenuItem>
+            <MenuItem Header="Information" Click="Information_click" BorderBrush="Black" BorderThickness="0.5"></MenuItem>
+            <MenuItem Header="Game Mode" Click="GameMode_MenuItem_Click" BorderBrush="Black" BorderThickness="0.5"></MenuItem>
+            <MenuItem Header="Save Game" Click="SaveGame_MenuItem_Click" BorderBrush="Black" BorderThickness="0.5"/>
+            <MenuItem Header="Load Game" Click="LoadGame_MenuItem_Click" BorderBrush="Black" BorderThickness="0.5"/>
         </Menu>
         <Image x:Name="previewImage"></Image>
 
