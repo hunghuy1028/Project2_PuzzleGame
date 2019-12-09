@@ -547,8 +547,6 @@ namespace Project2_PuzzleGame
                 }
             }
 
-
-            int t = 0;
             var source = new BitmapImage(
                 new Uri(firstLine, UriKind.Absolute));
             Debug.WriteLine($"{source.Width} - {source.Height}");
@@ -560,8 +558,6 @@ namespace Project2_PuzzleGame
 
             Canvas.SetLeft(previewImage, 400);
             Canvas.SetTop(previewImage, 0);
-
-            // Bat dau cat thanh 9 manh
 
             for (int i = 0; i < _size; i++)
             {
@@ -581,11 +577,9 @@ namespace Project2_PuzzleGame
                         cropImage.Width = width;
                         cropImage.Height = height;
                         cropImage.Source = cropBitmap;
-                        if (imgPos(_imageCheck[i, j]) != null) ;
-                        var img_pos = imgPos(_imageCheck[i, j]);
+                        var img_pos = imgPos(_imageCheck,_size, _size * i + j);
                         int t1 = img_pos.Item1;
                         int t2 = img_pos.Item2;
-
                         image_cropped[t1, t2] = cropImage;
                         canvas.Children.Add(cropImage);
                         Canvas.SetLeft(cropImage, startX + t1 * (width + 2));
@@ -593,22 +587,20 @@ namespace Project2_PuzzleGame
                         cropImage.MouseLeftButtonDown += CropImage_MouseLeftButtonDown;
                         cropImage.PreviewMouseLeftButtonUp += CropImage_PreviewMouseLeftButtonUp;
                         cropImage.Tag = new Tuple<int, int>(i, j);
-                        //cropImage.MouseLeftButtonUp
                     }
                 }
             }
         }
 
-        private static Tuple<int, int> imgPos(int pos)
+        private static Tuple<int, int> imgPos(int[,] a, int size, int pos)
         {
             for (int i = 0; i < _size; i++)
             {
                 for (int j = 0; j < _size; j++)
                 {
-                    if (_size * i + j == pos)
+                    if (a[i,j] == pos)
                         return Tuple.Create(i, j);
                 }
-
             }
             return null;
         }
