@@ -22,6 +22,7 @@ namespace Project2_PuzzleGame
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
+    /// 
     public partial class MainWindow : Window
     {
         public MainWindow()
@@ -29,12 +30,11 @@ namespace Project2_PuzzleGame
             InitializeComponent();
         }
 
-        const int _size = 4; //adjust your number of row and col here
-
-        Image[,] image_cropped = new Image[_size, _size];
+        static int _size = 3; //adjust your number of row and col here
+        Image[,] image_cropped;
+        int[,] _imageCheck;
         BitmapImage newGame_image;
         string imgPath;
-        int[,] _imageCheck = new int[_size, _size];
         bool _isDragging = false;
         bool _isShuffle = false;
         bool _canplay = true;
@@ -45,8 +45,8 @@ namespace Project2_PuzzleGame
         Point _lastPosition2;
         const int startX = 30;
         const int startY = 30;
-        const int width = 300/_size;
-        const int height = 300/_size;
+        int width = 300/_size;
+        int height = 300/_size;
 
         DispatcherTimer dispatcherTimer = new DispatcherTimer();
         Stopwatch stopWatch = new Stopwatch();
@@ -423,6 +423,8 @@ namespace Project2_PuzzleGame
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            image_cropped = new Image[_size, _size];
+            _imageCheck = new int[_size, _size];
             dispatcherTimer.Tick += new EventHandler(dt_Tick);
             dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 1);
         }
@@ -469,6 +471,13 @@ namespace Project2_PuzzleGame
             {
                 time_gameMode = gameModeOptionScreen.Time_GameMode;
                 level_gameMode = gameModeOptionScreen.Level_GameMode;
+                restartbtn(_size);
+                _size = level_gameMode;
+                width = 300 / _size;
+                height = 300 / _size;
+                image_cropped = new Image[_size, _size];
+                _imageCheck = new int[_size, _size];
+                newGame();
             }
             else
             {
@@ -479,44 +488,50 @@ namespace Project2_PuzzleGame
 
         private void NewGame_Click(object sender, RoutedEventArgs e)
         {
-            if (_canplay) { 
-            restartbtn(_size);
-            var source = newGame_image;
-            for (int i = 0; i < _size; i++)
+            if (_canplay)
             {
-                for (int j = 0; j < _size; j++)
+                restartbtn(_size);
+                newGame();
+            }
+        }
+
+        public void newGame()
+        {
+                var source = newGame_image;
+                for (int i = 0; i < _size; i++)
                 {
-                    if (!((i == _size-1) && (j == _size-1)))
+                    for (int j = 0; j < _size; j++)
                     {
-                        var h = (int)source.Height / _size;
-                        var w = (int)source.Height / _size;
-                        //Debug.WriteLine($"Len = {len}");
-                        var rect = new Int32Rect(i * w, j * h, w, h);
-                        var cropBitmap = new CroppedBitmap(source,
-                            rect);
+                        if (!((i == _size - 1) && (j == _size - 1)))
+                        {
+                            var h = (int)source.Height / _size;
+                            var w = (int)source.Height / _size;
+                            //Debug.WriteLine($"Len = {len}");
+                            var rect = new Int32Rect(i * w, j * h, w, h);
+                            var cropBitmap = new CroppedBitmap(source,
+                                rect);
 
-                        var cropImage = new Image();
-                        cropImage.Stretch = Stretch.Fill;
-                        cropImage.Width = width;
-                        cropImage.Height = height;
-                        cropImage.Source = cropBitmap;
-                        image_cropped[i, j] = cropImage;
-                        canvas.Children.Add(cropImage);
-                        Canvas.SetLeft(cropImage, startX + i * (width + 2));
-                        Canvas.SetTop(cropImage, startY + j * (height + 2));
+                            var cropImage = new Image();
+                            cropImage.Stretch = Stretch.Fill;
+                            cropImage.Width = width;
+                            cropImage.Height = height;
+                            cropImage.Source = cropBitmap;
+                            image_cropped[i, j] = cropImage;
+                            canvas.Children.Add(cropImage);
+                            Canvas.SetLeft(cropImage, startX + i * (width + 2));
+                            Canvas.SetTop(cropImage, startY + j * (height + 2));
 
-                        cropImage.MouseLeftButtonDown += CropImage_MouseLeftButtonDown;
-                        cropImage.PreviewMouseLeftButtonUp += CropImage_PreviewMouseLeftButtonUp;
-                        cropImage.Tag = new Tuple<int, int>(i, j);
-                        //cropImage.MouseLeftButtonUp
-                        _imageCheck[i, j] = _size * i + j;
+                            cropImage.MouseLeftButtonDown += CropImage_MouseLeftButtonDown;
+                            cropImage.PreviewMouseLeftButtonUp += CropImage_PreviewMouseLeftButtonUp;
+                            cropImage.Tag = new Tuple<int, int>(i, j);
+                            //cropImage.MouseLeftButtonUp
+                            _imageCheck[i, j] = _size * i + j;
+                        }
                     }
                 }
-            }
-            //the empty image is marked -1 value
-            _imageCheck[_size-1, _size-1] = -1;
-            _isShuffle = false;
-            }
+                //the empty image is marked -1 value
+                _imageCheck[_size - 1, _size - 1] = -1;
+                _isShuffle = false;
         }
 
         public void restartbtn(int row)
@@ -537,8 +552,8 @@ namespace Project2_PuzzleGame
             {
             const string filename = "save.txt";
             var writer = new StreamWriter(filename);
-
             writer.WriteLine(imgPath);
+            writer.WriteLine(_size);
             // Theo sau la ma tran bieu dien game
             for (int i = 0; i < _size; i++)
             {
@@ -558,13 +573,18 @@ namespace Project2_PuzzleGame
             }
         }
 
-        // lỗi
         private void LoadGame_MenuItem_Click(object sender, RoutedEventArgs e)
         {
             restartbtn(_size);
             var filename = "save.txt";
             var reader = new StreamReader(filename);
             var firstLine = reader.ReadLine();
+            var size = int.Parse(reader.ReadLine());
+            _size = size;
+            width = 300 / _size;
+            height = 300 / _size;
+            image_cropped = new Image[_size, _size];
+            _imageCheck = new int[_size, _size];
             imgPath = firstLine;
             for (int i = 0; i < _size; i++)
             {

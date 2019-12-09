@@ -75,22 +75,22 @@ namespace Project2_PuzzleGame
                 else
                 {
                     Level_GameMode = int.Parse(UserMode_TextBox.Text);
+
+                }
+                if (Level_GameMode > 1)
+                {
+                    DialogResult = true;
+                    Close();
+                }
+                else
+                {
+                    MessageBox.Show("You need input a number > 1");
                 }
             }
             catch
             {
                 MessageBox.Show("You need input a number");
             }
-            if (Level_GameMode > 1)
-            {
-                DialogResult = true;
-                Close();
-            }
-            else
-            {
-                MessageBox.Show("You need input a number > 1");
-            }
-
         }
 
         private void UserMode_Checked(object sender, RoutedEventArgs e)
