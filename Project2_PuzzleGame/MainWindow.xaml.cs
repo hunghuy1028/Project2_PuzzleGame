@@ -65,7 +65,6 @@ namespace Project2_PuzzleGame
                         new Uri(screen.FileName, UriKind.Absolute));
                     Debug.WriteLine($"{source.Width} - {source.Height}");
                     newGame_image = source;
-
                     previewImage.Width = 350;
                     previewImage.Height = 280;
                     previewImage.Source = source;
@@ -434,6 +433,17 @@ namespace Project2_PuzzleGame
         {
             image_cropped = new Image[_size, _size];
             _imageCheck = new int[_size, _size];
+
+            newGame_image = new BitmapImage(new Uri($"{AppDomain.CurrentDomain.BaseDirectory}Images\\a.jpg", UriKind.Absolute));
+            imgPath = $"{AppDomain.CurrentDomain.BaseDirectory}Images\\a.jpg";
+            previewImage.Width = 350;
+            previewImage.Height = 280;
+            previewImage.Source = newGame_image;
+
+            Canvas.SetLeft(previewImage, 400);
+            Canvas.SetTop(previewImage, 0);
+            newGame();
+
             dispatcherTimer.Tick += new EventHandler(dt_Tick);
             dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 1);
         }
