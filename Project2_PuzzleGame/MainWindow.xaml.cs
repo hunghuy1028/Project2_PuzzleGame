@@ -378,7 +378,7 @@ namespace Project2_PuzzleGame
                     bool isShuffle = false;
                     do
                     {
-                        for (int i = 0; i < 128; i++)
+                        for (int i = 0; i < 1280; i++)
                         {
                             int x = random.Next(2000);
                             x %= 4;
@@ -488,12 +488,12 @@ namespace Project2_PuzzleGame
                 
                 if (_isShuffle)
                 {
-                    if (gameMode == 1)
+                    if (time_gameMode == 1)
                     {
                         stopWatch.Start();
                         dispatcherTimer.Start();
                     }
-                    else if (gameMode ==2)
+                    else if (time_gameMode ==2)
                     {
                         countdown.Start();
                     }
@@ -507,14 +507,14 @@ namespace Project2_PuzzleGame
 
         private void StopTime()
         {
-            if (gameMode == 1)
+            if (time_gameMode == 1)
             {
                 if (stopWatch.IsRunning)
                 {
                     stopWatch.Stop();
                 }
             }
-            else if (gameMode == 2)
+            else if (time_gameMode == 2)
             {
                 countdown.Stop();
             }
@@ -527,8 +527,8 @@ namespace Project2_PuzzleGame
             var gameModeOptionScreen = new GameMode(time_gameMode,level_gameMode);
             if (gameModeOptionScreen.ShowDialog() == true)
             {
-                gameMode = gameModeOptionScreen.myGameMode;
-                 time_gameMode = gameModeOptionScreen.Time_GameMode;
+                
+                time_gameMode = gameModeOptionScreen.Time_GameMode;
                 level_gameMode = gameModeOptionScreen.Level_GameMode;
                 restartbtn(_size);
                 _size = level_gameMode;
@@ -536,11 +536,11 @@ namespace Project2_PuzzleGame
                 height = 300 / _size;
                 image_cropped = new Image[_size, _size];
                 _imageCheck = new int[_size, _size];
-                if(gameMode ==1)
+                if(time_gameMode ==1)
                 {
                     Timing.Content = "00:00:00";
                 }
-                else if(gameMode == 2)
+                else if(time_gameMode == 2)
                 {
                     Timing.Content = "   03:00";
                 }
@@ -563,7 +563,9 @@ namespace Project2_PuzzleGame
                     restartbtn(_size);
                     newGame();
                 }
-            }catch("Please choose image first");
+            }
+            catch
+            { MessageBox.Show("Please choose image first"); }
         }
 
         public void newGame()

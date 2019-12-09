@@ -15,8 +15,8 @@
         <RadioButton Name="EasyMode" GroupName="Level" Content="3x3" Canvas.Left="55" Canvas.Top="55"></RadioButton>
         <RadioButton Name="MediumMode" GroupName="Level" Content="5x5" Canvas.Left="55" Canvas.Top="75"></RadioButton>
         <RadioButton Name="DifficultMode" GroupName="Level" Content="7x7" Canvas.Left="55" Canvas.Top="95"></RadioButton>
-        <RadioButton Name="UserMode" Checked="UserMode_Checked" Unchecked="UserMode_Unchecked" GroupName="Level" Content="NxN" Canvas.Left="55" Canvas.Top="115"></RadioButton>
-        <TextBox Name="UserMode_TextBox" IsEnabled="False" Width="100" Height="20" Canvas.Left="105" Canvas.Top="112"/>
+        <RadioButton Name="UserMode" Checked="UserMode_Checked" Unchecked="UserMode_Unchecked" GroupName="Level" Content="Custom" Canvas.Left="55" Canvas.Top="115"></RadioButton>
+        <TextBox Name="UserMode_TextBox" IsEnabled="False" Width="100" Height="20" Canvas.Left="125" Canvas.Top="110"/>
         <Button Name="OK" Click="OK_Click" Content="OK" Width="50" Height="26" Canvas.Left="125" Canvas.Top="165"/>
     </Canvas>
 </Window>
