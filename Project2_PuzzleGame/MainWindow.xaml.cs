@@ -52,12 +52,12 @@ namespace Project2_PuzzleGame
         Stopwatch stopWatch = new Stopwatch();
         string currentTime = string.Empty;
         private void chooseImage_Button_Click(object sender, RoutedEventArgs e)
-        {
-            restartbtn(_size);
+        {    
             var screen = new OpenFileDialog();
 
             if (screen.ShowDialog() == true)
             {
+                restartbtn(_size);
                 try
                 {
                     imgPath = screen.FileName;
@@ -82,8 +82,18 @@ namespace Project2_PuzzleGame
                             {
                                 if (!((i == _size-1) && (j == _size-1)))
                                 {
-                                    var h = (int)source.Height / _size;
-                                    var w = (int)source.Height / _size;
+                                    int h, w;
+                                    if ((int)source.Height< (int)source.Width)
+                                    {
+                                        h = (int)source.Height / _size;
+                                        w = (int)source.Height / _size;
+                                    }
+                                    else
+                                    {
+                                        h = (int)source.Width / _size;
+                                        w = (int)source.Width / _size;
+                                    }
+                                     
                                     //Debug.WriteLine($"Len = {len}");
                                     var rect = new Int32Rect(i * w, j * h, w, h);
                                     var cropBitmap = new CroppedBitmap(source, rect);
@@ -121,7 +131,6 @@ namespace Project2_PuzzleGame
                     _canplay = false;
                 }
             }
-
         }
 
         private void CropImage_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
@@ -504,10 +513,19 @@ namespace Project2_PuzzleGame
                     {
                         if (!((i == _size - 1) && (j == _size - 1)))
                         {
-                            var h = (int)source.Height / _size;
-                            var w = (int)source.Height / _size;
-                            //Debug.WriteLine($"Len = {len}");
-                            var rect = new Int32Rect(i * w, j * h, w, h);
+                        int h, w;
+                        if ((int)source.Height < (int)source.Width)
+                        {
+                            h = (int)source.Height / _size;
+                            w = (int)source.Height / _size;
+                        }
+                        else
+                        {
+                            h = (int)source.Width / _size;
+                            w = (int)source.Width / _size;
+                        }
+                        //Debug.WriteLine($"Len = {len}");
+                        var rect = new Int32Rect(i * w, j * h, w, h);
                             var cropBitmap = new CroppedBitmap(source,
                                 rect);
 
@@ -617,8 +635,17 @@ namespace Project2_PuzzleGame
                 {
                     if (!((i == _size-1) && (j == _size-1)))
                     {
-                        var h = (int)source.Height / _size;
-                        var w = (int)source.Height / _size;
+                        int h, w;
+                        if ((int)source.Height < (int)source.Width)
+                        {
+                            h = (int)source.Height / _size;
+                            w = (int)source.Height / _size;
+                        }
+                        else
+                        {
+                            h = (int)source.Width / _size;
+                            w = (int)source.Width / _size;
+                        }
                         //Debug.WriteLine($"Len = {len}");
                         var rect = new Int32Rect(i * w, j * h, w, h);
                         var cropBitmap = new CroppedBitmap(source,
