@@ -29,22 +29,23 @@ namespace Project2_PuzzleGame
             InitializeComponent();
         }
 
-        const int _size = 3; //adjust your number of row and col here
+        const int _size = 4; //adjust your number of row and col here
 
         Image[,] image_cropped = new Image[_size, _size];
         BitmapImage newGame_image;
         string imgPath;
         int[,] _imageCheck = new int[_size, _size];
         bool _isDragging = false;
-        bool _canPlay = false;
+        bool _isShuffle = false;
+        bool _canplay = true;
         int gameMode = 1;// game mode 1: unlimited, 2: 3 minutes
         Image _selectedBitmap = null;
         Point _lastPosition;
         Point _lastPosition2;
         const int startX = 30;
         const int startY = 30;
-        const int width = 100;
-        const int height = 100;
+        const int width = 300/_size;
+        const int height = 300/_size;
 
         DispatcherTimer dispatcherTimer = new DispatcherTimer();
         Stopwatch stopWatch = new Stopwatch();
@@ -56,83 +57,104 @@ namespace Project2_PuzzleGame
 
             if (screen.ShowDialog() == true)
             {
-                imgPath = screen.FileName;
-                var source = new BitmapImage(
-                    new Uri(screen.FileName, UriKind.Absolute));
-                Debug.WriteLine($"{source.Width} - {source.Height}");
-                newGame_image = source;
-
-                previewImage.Width = 350;
-                previewImage.Height = 280;
-                previewImage.Source = source;
-
-                Canvas.SetLeft(previewImage, 400);
-                Canvas.SetTop(previewImage, 0);
-
-                // Bat dau cat thanh 9 manh
-
-                for (int i = 0; i < _size; i++)
+                try
                 {
-                    for (int j = 0; j < _size; j++)
+                    imgPath = screen.FileName;
+                    var source = new BitmapImage(
+                        new Uri(screen.FileName, UriKind.Absolute));
+                    Debug.WriteLine($"{source.Width} - {source.Height}");
+                    newGame_image = source;
+
+                    previewImage.Width = 350;
+                    previewImage.Height = 280;
+                    previewImage.Source = source;
+
+                    Canvas.SetLeft(previewImage, 400);
+                    Canvas.SetTop(previewImage, 0);
+
+                    // Bat dau cat thanh 9 manh
+                    try
                     {
-                        if (!((i == 2) && (j == 2)))
+                        for (int i = 0; i < _size; i++)
                         {
-                            var h = (int)source.Height / 3;
-                            var w = (int)source.Height / 3;
-                            //Debug.WriteLine($"Len = {len}");
-                            var rect = new Int32Rect(i * w, j * h, w, h);
-                            var cropBitmap = new CroppedBitmap(source,
-                                rect);
+                            for (int j = 0; j < _size; j++)
+                            {
+                                if (!((i == _size-1) && (j == _size-1)))
+                                {
+                                    var h = (int)source.Height / _size;
+                                    var w = (int)source.Height / _size;
+                                    //Debug.WriteLine($"Len = {len}");
+                                    var rect = new Int32Rect(i * w, j * h, w, h);
+                                    var cropBitmap = new CroppedBitmap(source, rect);
+                                    var cropImage = new Image();
+                                    cropImage.Stretch = Stretch.Fill;
+                                    cropImage.Width = width;
+                                    cropImage.Height = height;
+                                    cropImage.Source = cropBitmap;
+                                    image_cropped[i, j] = cropImage;
+                                    canvas.Children.Add(cropImage);
+                                    Canvas.SetLeft(cropImage, startX + i * (width + 2));
+                                    Canvas.SetTop(cropImage, startY + j * (height + 2));
 
-                            var cropImage = new Image();
-                            cropImage.Stretch = Stretch.Fill;
-                            cropImage.Width = width;
-                            cropImage.Height = height;
-                            cropImage.Source = cropBitmap;
-                            image_cropped[i, j] = cropImage;
-                            canvas.Children.Add(cropImage);
-                            Canvas.SetLeft(cropImage, startX + i * (width + 2));
-                            Canvas.SetTop(cropImage, startY + j * (height + 2));
-
-                            cropImage.MouseLeftButtonDown += CropImage_MouseLeftButtonDown;
-                            cropImage.PreviewMouseLeftButtonUp += CropImage_PreviewMouseLeftButtonUp;
-                            cropImage.Tag = new Tuple<int, int>(i, j);
-                            //cropImage.MouseLeftButtonUp
-                            _imageCheck[i, j] = _size * i + j;
+                                    cropImage.MouseLeftButtonDown += CropImage_MouseLeftButtonDown;
+                                    cropImage.PreviewMouseLeftButtonUp += CropImage_PreviewMouseLeftButtonUp;
+                                    cropImage.Tag = new Tuple<int, int>(i, j);
+                                    //cropImage.MouseLeftButtonUp
+                                    _imageCheck[i, j] = _size * i + j;
+                                }
+                            }
                         }
+                        _canplay = true;
+                        //the empty image is marked -1 value
+                        _imageCheck[_size-1, _size-1] = -1;
+                    }
+                    catch
+                    {
+                        MessageBox.Show("Please choose other image", "This image size is small to crop");
+                        _canplay = false;
                     }
                 }
-                //the empty image is marked -1 value
-                _imageCheck[2, 2] = -1;
+                catch
+                {
+                    MessageBox.Show("Make sure your file open is Image.\nPlease try agian or open other image", "Can't open you Image");
+                    _canplay = false;
+                }
             }
 
         }
 
         private void CropImage_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            _isDragging = false;
-            var position = e.GetPosition(this);
-            var image = sender as Image;
-            var (i, j) = image.Tag as Tuple<int, int>; //i,j: position of selected bitmap on 2 dimensions array
-            int x = (int)(position.X - startX) / (width + 2) * (width + 2) + startX;
-            int y = (int)(position.Y - startY) / (height + 2) * (height + 2) + startY;
-            int pos_x, pos_y, pos_x1, pos_y1;
-
-            pos_x = (x - startX) / (width + 2);
-            pos_y = (y - startY) / (height + 2);
-
-            pos_x1 = (int)(_lastPosition2.X - startX) / (width + 2);
-            pos_y1 = (int)(_lastPosition2.Y - startY) / (height + 2);
-
-            bool isValidDrag;
-            if (pos_x < _size && pos_y < _size)
+            if (_selectedBitmap != null && _canplay!= false)
             {
-                isValidDrag = true;
-                if (_imageCheck[pos_x, pos_y] == -1)
+                _isDragging = false;
+                var position = e.GetPosition(this);
+                var image = sender as Image;
+                var (i, j) = image.Tag as Tuple<int, int>; //i,j: position of selected bitmap on 2 dimensions array
+                int x = (int)(position.X - startX) / (width + 2) * (width + 2) + startX;
+                int y = (int)(position.Y - startY) / (height + 2) * (height + 2) + startY;
+                int pos_x, pos_y, pos_x1, pos_y1;
+
+                pos_x = (x - startX) / (width + 2);
+                pos_y = (y - startY) / (height + 2);
+
+                pos_x1 = (int)(_lastPosition2.X - startX) / (width + 2);
+                pos_y1 = (int)(_lastPosition2.Y - startY) / (height + 2);
+
+                bool isValidDrag;
+                if (pos_x < _size && pos_y < _size)
                 {
                     isValidDrag = true;
-                    if ((Math.Abs(pos_x - pos_x1) < 1 && Math.Abs(pos_y - pos_y1) < 2) || (Math.Abs(pos_x - pos_x1) < 2 && Math.Abs(pos_y - pos_y1) < 1))
+                    if (_imageCheck[pos_x, pos_y] == -1)
+                    {
                         isValidDrag = true;
+                        if ((Math.Abs(pos_x - pos_x1) < 1 && Math.Abs(pos_y - pos_y1) < 2) || (Math.Abs(pos_x - pos_x1) < 2 && Math.Abs(pos_y - pos_y1) < 1))
+                            isValidDrag = true;
+                        else
+                        {
+                            isValidDrag = false;
+                        }
+                    }
                     else
                     {
                         isValidDrag = false;
@@ -142,30 +164,26 @@ namespace Project2_PuzzleGame
                 {
                     isValidDrag = false;
                 }
-            }
-            else
-            {
-                isValidDrag = false;
-            }
 
-            if (!isValidDrag)
-            {
-                x = (int)(_lastPosition2.X - startX) / (width + 2) * (width + 2) + startX;
-                y = (int)(_lastPosition2.Y - startY) / (height + 2) * (height + 2) + startY;
-            }
-            else
-            {
-                Swap(ref _imageCheck[pos_x, pos_y], ref _imageCheck[pos_x1, pos_y1]);
-                Swap<Image>(ref image_cropped[pos_x, pos_y], ref image_cropped[pos_x1, pos_y1]);
-            }
+                if (!isValidDrag)
+                {
+                    x = (int)(_lastPosition2.X - startX) / (width + 2) * (width + 2) + startX;
+                    y = (int)(_lastPosition2.Y - startY) / (height + 2) * (height + 2) + startY;
+                }
+                else
+                {
+                    Swap(ref _imageCheck[pos_x, pos_y], ref _imageCheck[pos_x1, pos_y1]);
+                    Swap<Image>(ref image_cropped[pos_x, pos_y], ref image_cropped[pos_x1, pos_y1]);
+                }
 
-            Canvas.SetLeft(_selectedBitmap, x);
-            Canvas.SetTop(_selectedBitmap, y);
+                Canvas.SetLeft(_selectedBitmap, x);
+                Canvas.SetTop(_selectedBitmap, y);
 
-            if (isValidDrag && checkWin(_imageCheck, _size))
-            {
-                StopTime();
-                MessageBox.Show("You Win!");
+                if (isValidDrag && checkWin(_imageCheck, _size))
+                {
+                    StopTime();
+                    MessageBox.Show("You Win!");
+                }
             }
 
         }
@@ -179,7 +197,7 @@ namespace Project2_PuzzleGame
 
         private void CropImage_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (_canPlay)
+            if (_isShuffle)
             {
                 _isDragging = true;
                 _selectedBitmap = sender as Image;
@@ -201,7 +219,7 @@ namespace Project2_PuzzleGame
             int i = ((int)position.Y - startY) / height;
             int j = ((int)position.X - startX) / width;
 
-            this.Title = $"{position.X} - {position.Y}, a[{i}][{j}]";
+            //this.Title = $"{position.X} - {position.Y}, a[{i}][{j}]";
 
             if (_isDragging)
             {
@@ -315,7 +333,7 @@ namespace Project2_PuzzleGame
 
         private void Window_KeyDown(object sender, KeyEventArgs e)
         {
-            if (_canPlay)
+            if (_isShuffle && _canplay)
             {
                 Start_Click(sender, e);
                 if (e.Key == Key.Up)
@@ -346,6 +364,7 @@ namespace Project2_PuzzleGame
 
         private void Shuffle_Click(object sender, RoutedEventArgs e)
         {
+            if (_canplay) { 
             var random = new Random();
             bool isShuffle = false;
             do
@@ -380,7 +399,8 @@ namespace Project2_PuzzleGame
                 if (count == _size) isShuffle = true;
                 else isShuffle = false;
             } while (isShuffle);
-            _canPlay = true;
+            _isShuffle = true;
+            }
         }
 
         private static bool checkWin(int[,] a, int size)
@@ -419,14 +439,17 @@ namespace Project2_PuzzleGame
 
         private void Start_Click(object sender, RoutedEventArgs e)
         {
-            if (_canPlay)
+            if (_canplay)
             {
-                stopWatch.Start();
-                dispatcherTimer.Start();
-            }
-            else
-            {
-                MessageBox.Show("You can only play after shuffle", "Play");
+                if (_isShuffle)
+                {
+                    stopWatch.Start();
+                    dispatcherTimer.Start();
+                }
+                else
+                {
+                    MessageBox.Show("You can only play after shuffle", "Play");
+                }
             }
         }
 
@@ -454,16 +477,17 @@ namespace Project2_PuzzleGame
 
         private void NewGame_Click(object sender, RoutedEventArgs e)
         {
+            if (_canplay) { 
             restartbtn(_size);
             var source = newGame_image;
             for (int i = 0; i < _size; i++)
             {
                 for (int j = 0; j < _size; j++)
                 {
-                    if (!((i == 2) && (j == 2)))
+                    if (!((i == _size-1) && (j == _size-1)))
                     {
-                        var h = (int)source.Height / 3;
-                        var w = (int)source.Height / 3;
+                        var h = (int)source.Height / _size;
+                        var w = (int)source.Height / _size;
                         //Debug.WriteLine($"Len = {len}");
                         var rect = new Int32Rect(i * w, j * h, w, h);
                         var cropBitmap = new CroppedBitmap(source,
@@ -488,8 +512,9 @@ namespace Project2_PuzzleGame
                 }
             }
             //the empty image is marked -1 value
-            _imageCheck[2, 2] = -1;
-            _canPlay = false;
+            _imageCheck[_size-1, _size-1] = -1;
+            _isShuffle = false;
+            }
         }
 
         public void restartbtn(int row)
@@ -506,6 +531,8 @@ namespace Project2_PuzzleGame
 
         private void SaveGame_MenuItem_Click(object sender, RoutedEventArgs e)
         {
+            if (_canplay)
+            {
             const string filename = "save.txt";
             var writer = new StreamWriter(filename);
 
@@ -526,6 +553,7 @@ namespace Project2_PuzzleGame
             writer.Close();
 
             MessageBox.Show("Game is saved");
+            }
         }
 
         // lỗi
@@ -535,6 +563,7 @@ namespace Project2_PuzzleGame
             var filename = "save.txt";
             var reader = new StreamReader(filename);
             var firstLine = reader.ReadLine();
+            imgPath = firstLine;
             for (int i = 0; i < _size; i++)
             {
                 var tokens = reader.ReadLine().Split(
@@ -546,6 +575,7 @@ namespace Project2_PuzzleGame
                     _imageCheck[i, j] = int.Parse(tokens[j]);
                 }
             }
+            reader.Close();
 
             var source = new BitmapImage(
                 new Uri(firstLine, UriKind.Absolute));
@@ -563,10 +593,10 @@ namespace Project2_PuzzleGame
             {
                 for (int j = 0; j < _size; j++)
                 {
-                    if (!((i == 2) && (j == 2)))
+                    if (!((i == _size-1) && (j == _size-1)))
                     {
-                        var h = (int)source.Height / 3;
-                        var w = (int)source.Height / 3;
+                        var h = (int)source.Height / _size;
+                        var w = (int)source.Height / _size;
                         //Debug.WriteLine($"Len = {len}");
                         var rect = new Int32Rect(i * w, j * h, w, h);
                         var cropBitmap = new CroppedBitmap(source,
@@ -577,7 +607,7 @@ namespace Project2_PuzzleGame
                         cropImage.Width = width;
                         cropImage.Height = height;
                         cropImage.Source = cropBitmap;
-                        var img_pos = imgPos(_imageCheck,_size, _size * i + j);
+                        var img_pos = imgPos(_imageCheck, _size, _size * i + j);
                         int t1 = img_pos.Item1;
                         int t2 = img_pos.Item2;
                         image_cropped[t1, t2] = cropImage;
@@ -590,6 +620,7 @@ namespace Project2_PuzzleGame
                     }
                 }
             }
+            _canplay = true;
         }
 
         private static Tuple<int, int> imgPos(int[,] a, int size, int pos)
@@ -598,7 +629,7 @@ namespace Project2_PuzzleGame
             {
                 for (int j = 0; j < _size; j++)
                 {
-                    if (a[i,j] == pos)
+                    if (a[i, j] == pos)
                         return Tuple.Create(i, j);
                 }
             }
