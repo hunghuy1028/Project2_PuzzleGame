@@ -6,7 +6,9 @@
         xmlns:local="clr-namespace:Project2_PuzzleGame"
         mc:Ignorable="d"
         KeyDown="Window_KeyDown"
-        Title="MainWindow" Height="450" Width="800" MouseMove="Window_MouseMove" Loaded="Window_Loaded">
+        Title="8 Puzzle" Icon="Images/puzzle.png"
+        ResizeMode="CanMinimize"
+        Height="450" Width="800" MouseMove="Window_MouseMove" Loaded="Window_Loaded">
     <Canvas Name="canvas">
         <Menu Margin=" 5 5 0 0" BorderBrush="Black" BorderThickness="0.1" Focusable="False" FocusVisualStyle="{x:Null}">
             <MenuItem Header="Choose Image" Click="chooseImage_Button_Click" BorderBrush="Black" BorderThickness="0.5"></MenuItem>
