@@ -60,6 +60,7 @@ namespace Project2_PuzzleGame
 
             if (screen.ShowDialog() == true)
             {
+                restartbtn(_size);
                 imgPath = screen.FileName;
                 var source = new BitmapImage(new Uri(screen.FileName, UriKind.Absolute));
                 //Debug.WriteLine($"{source.Width} - {source.Height}");
@@ -70,7 +71,7 @@ namespace Project2_PuzzleGame
                 previewImage.Source = source;
 
                 Canvas.SetLeft(previewImage, 400);
-                Canvas.SetTop(previewImage, 0);
+                Canvas.SetTop(previewImage, 60);
 
                 // Bat dau cat thanh 9 manh
                 try
@@ -84,7 +85,7 @@ namespace Project2_PuzzleGame
                                 if (!((i == _size-1) && (j == _size-1)))
                                 {
                                     int h, w;
-                                    if ((int)source.Height< (int)source.Width)
+                                    if ((int)source.Height < (int)source.Width)
                                     {
                                         h = (int)source.Height / _size;
                                         w = (int)source.Height / _size;
@@ -94,6 +95,7 @@ namespace Project2_PuzzleGame
                                         h = (int)source.Width / _size;
                                         w = (int)source.Width / _size;
                                     }
+                                    MessageBox.Show($"{h}-{w} {source.Width}-{source.Height}");
                                      
                                     //Debug.WriteLine($"Len = {len}");
                                     var rect = new Int32Rect(i * w, j * h, w, h);
@@ -123,12 +125,13 @@ namespace Project2_PuzzleGame
                 }
                 catch
                 {
-                    MessageBox.Show("Please choose other image", "This image size is small to crop");
+                    MessageBox.Show("Please choose other image.\nThis image cant crop", "Can't crop image");
                     _canplay = false;
                 }
             }
         }
 
+        bool isValidDrag;
         private void CropImage_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             if (_selectedBitmap != null && _canplay!= false)
@@ -147,7 +150,7 @@ namespace Project2_PuzzleGame
                 pos_x1 = (int)(_lastPosition2.X - startX) / (width + 2);
                 pos_y1 = (int)(_lastPosition2.Y - startY) / (height + 2);
 
-                bool isValidDrag;
+                
                 if (pos_x < _size && pos_y < _size)
                 {
                     isValidDrag = true;
@@ -170,6 +173,8 @@ namespace Project2_PuzzleGame
                 {
                     isValidDrag = false;
                 }
+                
+                if(_lastPosition.X>340)
 
                 if (!isValidDrag)
                 {
@@ -193,6 +198,7 @@ namespace Project2_PuzzleGame
             }
 
         }
+
 
         static void Swap<T>(ref T x, ref T y)
         {
@@ -220,12 +226,15 @@ namespace Project2_PuzzleGame
 
         private void Window_MouseMove(object sender, MouseEventArgs e)
         {
+
+            //rawTable();
+
             var position = e.GetPosition(this);
 
             int i = ((int)position.Y - startY) / height;
             int j = ((int)position.X - startX) / width;
 
-            //this.Title = $"{position.X} - {position.Y}, a[{i}][{j}]";
+            this.Title = $"{position.X} - {position.Y}, a[{i}][{j}]";
 
             if (_isDragging)
             {
@@ -238,6 +247,39 @@ namespace Project2_PuzzleGame
                 Canvas.SetTop(_selectedBitmap, lastTop + dy);
 
                 _lastPosition = position;
+            }
+        }
+
+        public void rawTable()
+        {
+            // vẽ số cột
+            for (int i = 0; i <= _size; i++)
+            {
+                var line = new Line();
+                line.StrokeThickness = 1;
+                line.Stroke = new SolidColorBrush(Colors.Red);
+                canvas.Children.Add(line);
+
+                line.X1 = startX-1 + i * (width+2);
+                line.Y1 = startY-1;
+
+                line.X2 = startX-1 + i * (width+2);
+                line.Y2 = startY-1 + _size * (height+2);
+
+            }
+            // vẽ số dòng
+            for (int i = 0; i <= _size; i++)
+            {
+                var line = new Line();
+                line.StrokeThickness = 1;
+                line.Stroke = new SolidColorBrush(Colors.Red);
+                canvas.Children.Add(line);
+
+                line.X1 = startX-1;
+                line.Y1 = startY-1 + i * (2+height);
+
+                line.X2 = startX-1 + _size * (width+2);
+                line.Y2 = startY -1+ i * (height+2);
             }
         }
 
@@ -751,6 +793,5 @@ namespace Project2_PuzzleGame
             }
             return null;
         }
-
     }
 }
