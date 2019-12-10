@@ -31,10 +31,12 @@ namespace Project2_PuzzleGame
         }
 
         static int _size = 3; //adjust your number of row and col here
+
+        //Game check
         Image[,] image_cropped;
         int[,] _imageCheck;
-        BitmapImage newGame_image;
-        string imgPath;
+
+        //Check game rule
         bool _isDragging = false;
         bool _isShuffle = false;
         bool _canplay = true;
@@ -43,16 +45,42 @@ namespace Project2_PuzzleGame
         Image _selectedBitmap = null;
         Point _lastPosition;
         Point _lastPosition2;
+
         const int startX = 30;
         const int startY = 30;
         int width = 300/_size;
         int height = 300/_size;
+        BitmapImage newGame_image;
+        string imgPath;
 
+        //Timing
         DispatcherTimer dispatcherTimer = new DispatcherTimer();
         DispatcherTimer countdown = new DispatcherTimer();
         Stopwatch stopWatch = new Stopwatch();
         string currentTime = string.Empty;
         int timeCountDown = 180;
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            image_cropped = new Image[_size, _size];
+            _imageCheck = new int[_size, _size];
+
+            newGame_image = new BitmapImage(new Uri($"{AppDomain.CurrentDomain.BaseDirectory}Images\\a.jpg", UriKind.Absolute));
+            imgPath = $"{AppDomain.CurrentDomain.BaseDirectory}Images\\a.jpg";
+            previewImage.Width = 350;
+            previewImage.Height = 280;
+            previewImage.Source = newGame_image;
+
+            Canvas.SetLeft(previewImage, 400);
+            Canvas.SetTop(previewImage, 0);
+            newGame();
+
+            dispatcherTimer.Tick += new EventHandler(dt_Tick);
+            dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 1);
+            countdown.Tick += new EventHandler(cd_Tick);
+            countdown.Interval = new TimeSpan(0, 0, 1);
+        }
+
         private void chooseImage_Button_Click(object sender, RoutedEventArgs e)
         {    
             var screen = new OpenFileDialog();
@@ -198,31 +226,6 @@ namespace Project2_PuzzleGame
 
         }
 
-
-        static void Swap<T>(ref T x, ref T y)
-        {
-            T t = y;
-            y = x;
-            x = t;
-        }
-
-        private void CropImage_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            if (_isShuffle)
-            {
-                _isDragging = true;
-                _selectedBitmap = sender as Image;
-                _lastPosition = e.GetPosition(this);
-                _lastPosition2 = e.GetPosition(this);
-                Start_Click(sender, e);
-            }
-            else
-            {
-                MessageBox.Show("Shuffle make game more fun ^^", "Message");
-            }
-
-        }
-
         private void Window_MouseMove(object sender, MouseEventArgs e)
         {
 
@@ -246,6 +249,115 @@ namespace Project2_PuzzleGame
                 _lastPosition = position;
             }
         }
+
+        private void CropImage_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (_isShuffle)
+            {
+                _isDragging = true;
+                _selectedBitmap = sender as Image;
+                _lastPosition = e.GetPosition(this);
+                _lastPosition2 = e.GetPosition(this);
+                Start_Click(sender, e);
+            }
+            else
+            {
+                MessageBox.Show("Shuffle make game more fun ^^", "Message");
+            }
+
+        }
+
+        static void Swap<T>(ref T x, ref T y)
+        {
+            T t = y;
+            y = x;
+            x = t;
+        }
+
+        public void newGame()
+        {
+            StopTime();
+            var source = newGame_image;
+            for (int i = 0; i < _size; i++)
+            {
+                for (int j = 0; j < _size; j++)
+                {
+                    if (!((i == _size - 1) && (j == _size - 1)))
+                    {
+                        int h, w;
+                        if ((int)source.Height < (int)source.Width)
+                        {
+                            h = (int)source.Height / _size;
+                            w = (int)source.Height / _size;
+                        }
+                        else
+                        {
+                            h = (int)source.Width / _size;
+                            w = (int)source.Width / _size;
+                        }
+                        //Debug.WriteLine($"Len = {len}");
+                        var rect = new Int32Rect(i * w, j * h, w, h);
+                        var cropBitmap = new CroppedBitmap(source,
+                            rect);
+
+                        var cropImage = new Image();
+                        cropImage.Stretch = Stretch.Fill;
+                        cropImage.Width = width;
+                        cropImage.Height = height;
+                        cropImage.Source = cropBitmap;
+                        image_cropped[i, j] = cropImage;
+                        canvas.Children.Add(cropImage);
+                        Canvas.SetLeft(cropImage, startX + i * (width + 2));
+                        Canvas.SetTop(cropImage, startY + j * (height + 2));
+
+                        cropImage.MouseLeftButtonDown += CropImage_MouseLeftButtonDown;
+                        cropImage.PreviewMouseLeftButtonUp += CropImage_PreviewMouseLeftButtonUp;
+                        cropImage.Tag = new Tuple<int, int>(i, j);
+                        //cropImage.MouseLeftButtonUp
+                        _imageCheck[i, j] = _size * i + j;
+                    }
+                }
+                //the empty image is marked -1 value
+                _imageCheck[_size - 1, _size - 1] = -1;
+                _isShuffle = false;
+            }
+            //the empty image is marked -1 value
+            _imageCheck[_size - 1, _size - 1] = -1;
+            _isShuffle = false;
+        }
+
+        private void GameMode_MenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            var gameModeOptionScreen = new GameMode(time_gameMode, level_gameMode);
+            if (gameModeOptionScreen.ShowDialog() == true)
+            {
+
+                time_gameMode = gameModeOptionScreen.Time_GameMode;
+                level_gameMode = gameModeOptionScreen.Level_GameMode;
+                restartbtn(_size);
+                _size = level_gameMode;
+                width = 300 / _size;
+                height = 300 / _size;
+                image_cropped = new Image[_size, _size];
+                _imageCheck = new int[_size, _size];
+                if (time_gameMode == 1)
+                {
+                    Timing.Content = "00:00:00";
+                }
+                else if (time_gameMode == 2)
+                {
+                    Timing.Content = "   03:00";
+                }
+
+                newGame();
+            }
+            else
+            {
+                Debug.WriteLine("");
+            }
+
+        }
+
 
         private void Information_click(object sender, RoutedEventArgs e)
         {
@@ -329,20 +441,6 @@ namespace Project2_PuzzleGame
             }
         }
 
-        private static Tuple<int, int> emptyPos(int[,] a, int size)
-        {
-            for (int i = 0; i < size; i++)
-            {
-                for (int j = 0; j < size; j++)
-                {
-                    if (a[i, j] == -1)
-                        return Tuple.Create(i, j);
-                }
-
-            }
-            return null;
-        }
-
         private void Window_KeyDown(object sender, KeyEventArgs e)
         {
             if (_isShuffle && _canplay)
@@ -377,8 +475,6 @@ namespace Project2_PuzzleGame
                 MessageBox.Show("Shuffle make game more fun ^^", "Message");
             }
         }
-
-
 
         private void Shuffle_Click(object sender, RoutedEventArgs e)
         {
@@ -442,29 +538,6 @@ namespace Project2_PuzzleGame
                 }
             }
             return true;
-        }
-
-
-
-        private void Window_Loaded(object sender, RoutedEventArgs e)
-        {
-            image_cropped = new Image[_size, _size];
-            _imageCheck = new int[_size, _size];
-
-            newGame_image = new BitmapImage(new Uri($"{AppDomain.CurrentDomain.BaseDirectory}Images\\a.jpg", UriKind.Absolute));
-            imgPath = $"{AppDomain.CurrentDomain.BaseDirectory}Images\\a.jpg";
-            previewImage.Width = 350;
-            previewImage.Height = 280;
-            previewImage.Source = newGame_image;
-
-            Canvas.SetLeft(previewImage, 400);
-            Canvas.SetTop(previewImage, 0);
-            newGame();
-
-            dispatcherTimer.Tick += new EventHandler(dt_Tick);
-            dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 1);
-            countdown.Tick += new EventHandler(cd_Tick);
-            countdown.Interval = new TimeSpan(0, 0, 1);       
         }
 
         private void cd_Tick(object sender, EventArgs e)
@@ -535,38 +608,6 @@ namespace Project2_PuzzleGame
             Timing.Content = "00:00:00";
         }
 
-        private void GameMode_MenuItem_Click(object sender, RoutedEventArgs e)
-        {
-            var gameModeOptionScreen = new GameMode(time_gameMode,level_gameMode);
-            if (gameModeOptionScreen.ShowDialog() == true)
-            {
-                
-                time_gameMode = gameModeOptionScreen.Time_GameMode;
-                level_gameMode = gameModeOptionScreen.Level_GameMode;
-                restartbtn(_size);
-                _size = level_gameMode;
-                width = 300 / _size;
-                height = 300 / _size;
-                image_cropped = new Image[_size, _size];
-                _imageCheck = new int[_size, _size];
-                if(time_gameMode ==1)
-                {
-                    Timing.Content = "00:00:00";
-                }
-                else if(time_gameMode == 2)
-                {
-                    Timing.Content = "   03:00";
-                }
-               
-                newGame();
-            }
-            else
-            {
-                Debug.WriteLine("");
-            }
-
-        }
-
         private void NewGame_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -579,58 +620,6 @@ namespace Project2_PuzzleGame
             }
             catch
             { MessageBox.Show("Please choose image first"); }
-        }
-
-        public void newGame()
-        {
-            StopTime();
-                var source = newGame_image;
-                for (int i = 0; i < _size; i++)
-                {
-                    for (int j = 0; j < _size; j++)
-                    {
-                        if (!((i == _size - 1) && (j == _size - 1)))
-                        {
-                        int h, w;
-                        if ((int)source.Height < (int)source.Width)
-                        {
-                            h = (int)source.Height / _size;
-                            w = (int)source.Height / _size;
-                        }
-                        else
-                        {
-                            h = (int)source.Width / _size;
-                            w = (int)source.Width / _size;
-                        }
-                        //Debug.WriteLine($"Len = {len}");
-                        var rect = new Int32Rect(i * w, j * h, w, h);
-                            var cropBitmap = new CroppedBitmap(source,
-                                rect);
-
-                            var cropImage = new Image();
-                            cropImage.Stretch = Stretch.Fill;
-                            cropImage.Width = width;
-                            cropImage.Height = height;
-                            cropImage.Source = cropBitmap;
-                            image_cropped[i, j] = cropImage;
-                            canvas.Children.Add(cropImage);
-                            Canvas.SetLeft(cropImage, startX + i * (width + 2));
-                            Canvas.SetTop(cropImage, startY + j * (height + 2));
-
-                            cropImage.MouseLeftButtonDown += CropImage_MouseLeftButtonDown;
-                            cropImage.PreviewMouseLeftButtonUp += CropImage_PreviewMouseLeftButtonUp;
-                            cropImage.Tag = new Tuple<int, int>(i, j);
-                            //cropImage.MouseLeftButtonUp
-                            _imageCheck[i, j] = _size * i + j;
-                        }
-                    }
-                    //the empty image is marked -1 value
-                    _imageCheck[_size - 1, _size - 1] = -1;
-                    _isShuffle = false;
-                }
-                //the empty image is marked -1 value
-                _imageCheck[_size - 1, _size - 1] = -1;
-                _isShuffle = false;
         }
 
         public void restartbtn(int row)
@@ -773,5 +762,21 @@ namespace Project2_PuzzleGame
             }
             return null;
         }
+
+        private static Tuple<int, int> emptyPos(int[,] a, int size)
+        {
+            for (int i = 0; i < size; i++)
+            {
+                for (int j = 0; j < size; j++)
+                {
+                    if (a[i, j] == -1)
+                        return Tuple.Create(i, j);
+                }
+
+            }
+            return null;
+        }
+
+        
     }
 }
