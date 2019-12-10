@@ -1,0 +1,17 @@
+C:\Users\Dell\source\repos\Code_HK1_2019_2020\Code_C#\WindowsPrograming\Do_an\Do_an2\Project2_PuzzleGame\Project2_PuzzleGame\bin\Release\Images\a.jpg
+C:\Users\Dell\source\repos\Code_HK1_2019_2020\Code_C#\WindowsPrograming\Do_an\Do_an2\Project2_PuzzleGame\Project2_PuzzleGame\bin\Release\Project2_PuzzleGame.exe.config
+C:\Users\Dell\source\repos\Code_HK1_2019_2020\Code_C#\WindowsPrograming\Do_an\Do_an2\Project2_PuzzleGame\Project2_PuzzleGame\bin\Release\Project2_PuzzleGame.exe
+C:\Users\Dell\source\repos\Code_HK1_2019_2020\Code_C#\WindowsPrograming\Do_an\Do_an2\Project2_PuzzleGame\Project2_PuzzleGame\bin\Release\Project2_PuzzleGame.pdb
+C:\Users\Dell\source\repos\Code_HK1_2019_2020\Code_C#\WindowsPrograming\Do_an\Do_an2\Project2_PuzzleGame\Project2_PuzzleGame\obj\Release\Project2_PuzzleGame.csprojAssemblyReference.cache
+C:\Users\Dell\source\repos\Code_HK1_2019_2020\Code_C#\WindowsPrograming\Do_an\Do_an2\Project2_PuzzleGame\Project2_PuzzleGame\obj\Release\GameMode.g.cs
+C:\Users\Dell\source\repos\Code_HK1_2019_2020\Code_C#\WindowsPrograming\Do_an\Do_an2\Project2_PuzzleGame\Project2_PuzzleGame\obj\Release\MainWindow.g.cs
+C:\Users\Dell\source\repos\Code_HK1_2019_2020\Code_C#\WindowsPrograming\Do_an\Do_an2\Project2_PuzzleGame\Project2_PuzzleGame\obj\Release\App.g.cs
+C:\Users\Dell\source\repos\Code_HK1_2019_2020\Code_C#\WindowsPrograming\Do_an\Do_an2\Project2_PuzzleGame\Project2_PuzzleGame\obj\Release\Project2_PuzzleGame_MarkupCompile.cache
+C:\Users\Dell\source\repos\Code_HK1_2019_2020\Code_C#\WindowsPrograming\Do_an\Do_an2\Project2_PuzzleGame\Project2_PuzzleGame\obj\Release\Project2_PuzzleGame_MarkupCompile.lref
+C:\Users\Dell\source\repos\Code_HK1_2019_2020\Code_C#\WindowsPrograming\Do_an\Do_an2\Project2_PuzzleGame\Project2_PuzzleGame\obj\Release\GameMode.baml
+C:\Users\Dell\source\repos\Code_HK1_2019_2020\Code_C#\WindowsPrograming\Do_an\Do_an2\Project2_PuzzleGame\Project2_PuzzleGame\obj\Release\MainWindow.baml
+C:\Users\Dell\source\repos\Code_HK1_2019_2020\Code_C#\WindowsPrograming\Do_an\Do_an2\Project2_PuzzleGame\Project2_PuzzleGame\obj\Release\Project2_PuzzleGame.g.resources
+C:\Users\Dell\source\repos\Code_HK1_2019_2020\Code_C#\WindowsPrograming\Do_an\Do_an2\Project2_PuzzleGame\Project2_PuzzleGame\obj\Release\Project2_PuzzleGame.Properties.Resources.resources
+C:\Users\Dell\source\repos\Code_HK1_2019_2020\Code_C#\WindowsPrograming\Do_an\Do_an2\Project2_PuzzleGame\Project2_PuzzleGame\obj\Release\Project2_PuzzleGame.csproj.GenerateResource.cache
+C:\Users\Dell\source\repos\Code_HK1_2019_2020\Code_C#\WindowsPrograming\Do_an\Do_an2\Project2_PuzzleGame\Project2_PuzzleGame\obj\Release\Project2_PuzzleGame.exe
+C:\Users\Dell\source\repos\Code_HK1_2019_2020\Code_C#\WindowsPrograming\Do_an\Do_an2\Project2_PuzzleGame\Project2_PuzzleGame\obj\Release\Project2_PuzzleGame.pdb

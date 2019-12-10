@@ -1,0 +1,22 @@
+﻿<Window x:Class="Project2_PuzzleGame.GameMode"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Project2_PuzzleGame"
+        mc:Ignorable="d"
+        Title="GameMode" Height="240" Width="300">
+    <Canvas>
+        <Label Content="Time" Canvas.Left="7"></Label>
+        <RadioButton Name="Unlimited" GroupName="TimeMode" Content="Unlimited" Canvas.Left="55" Canvas.Top="6"></RadioButton>
+        <RadioButton Name="Three_Minutes" GroupName="TimeMode" Content="3 Minutes" Canvas.Left="55" Canvas.Top="26"></RadioButton>
+
+        <Label Content="Level" Canvas.Left="7" Canvas.Top="48"></Label>
+        <RadioButton Name="EasyMode" GroupName="Level" Content="3x3" Canvas.Left="55" Canvas.Top="55"></RadioButton>
+        <RadioButton Name="MediumMode" GroupName="Level" Content="5x5" Canvas.Left="55" Canvas.Top="75"></RadioButton>
+        <RadioButton Name="DifficultMode" GroupName="Level" Content="7x7" Canvas.Left="55" Canvas.Top="95"></RadioButton>
+        <RadioButton Name="UserMode" Checked="UserMode_Checked" Unchecked="UserMode_Unchecked" GroupName="Level" Content="Custom" Canvas.Left="55" Canvas.Top="115"></RadioButton>
+        <TextBox Name="UserMode_TextBox" IsEnabled="False" Width="100" Height="20" Canvas.Left="125" Canvas.Top="110"/>
+        <Button Name="OK" Click="OK_Click" Content="OK" Width="50" Height="26" Canvas.Left="125" Canvas.Top="165"/>
+    </Canvas>
+</Window>
