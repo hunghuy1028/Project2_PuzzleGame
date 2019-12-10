@@ -99,7 +99,7 @@ namespace Project2_PuzzleGame
                 previewImage.Source = source;
 
                 Canvas.SetLeft(previewImage, 400);
-                Canvas.SetTop(previewImage, 60);
+                Canvas.SetTop(previewImage, startX);
 
                 // Bat dau cat thanh 9 manh
                 try
@@ -123,7 +123,7 @@ namespace Project2_PuzzleGame
                                         h = (int)source.Width / _size;
                                         w = (int)source.Width / _size;
                                     }
-                                    MessageBox.Show($"{h}-{w} {source.Width}-{source.Height}");
+                                    //MessageBox.Show($"{h}-{w} {source.Width}-{source.Height}");
                                      
                                     //Debug.WriteLine($"Len = {len}");
                                     var rect = new Int32Rect(i * w, j * h, w, h);
@@ -140,6 +140,7 @@ namespace Project2_PuzzleGame
 
                                     cropImage.MouseLeftButtonDown += CropImage_MouseLeftButtonDown;
                                     cropImage.PreviewMouseLeftButtonUp += CropImage_PreviewMouseLeftButtonUp;
+                                    Mouse.Capture(cropImage);
                                     cropImage.Tag = new Tuple<int, int>(i, j);
                                     //cropImage.MouseLeftButtonUp
                                     _imageCheck[i, j] = _size * i + j;
@@ -242,7 +243,7 @@ namespace Project2_PuzzleGame
             int i = ((int)position.Y - startY) / height;
             int j = ((int)position.X - startX) / width;
 
-            //this.Title = $"{position.X} - {position.Y}, a[{i}][{j}]";
+            this.Title = $"{position.X} - {position.Y}, a[{i}][{j}]";
 
             if (_isDragging)
             {
@@ -320,6 +321,8 @@ namespace Project2_PuzzleGame
 
                         cropImage.MouseLeftButtonDown += CropImage_MouseLeftButtonDown;
                         cropImage.PreviewMouseLeftButtonUp += CropImage_PreviewMouseLeftButtonUp;
+                        //canvas.CaptureMouse();
+                        //Mouse.Capture(cropImage);
                         cropImage.Tag = new Tuple<int, int>(i, j);
                         //cropImage.MouseLeftButtonUp
                         _imageCheck[i, j] = _size * i + j;
