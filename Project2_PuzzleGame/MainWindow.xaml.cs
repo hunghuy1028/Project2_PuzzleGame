@@ -386,6 +386,7 @@ namespace Project2_PuzzleGame
             {
                 if (_canplay)
                 {
+                    StopTime();
                     var random = new Random();
                     bool isShuffle = false;
                     do
@@ -582,6 +583,7 @@ namespace Project2_PuzzleGame
 
         public void newGame()
         {
+            StopTime();
                 var source = newGame_image;
                 for (int i = 0; i < _size; i++)
                 {
@@ -651,6 +653,7 @@ namespace Project2_PuzzleGame
             var writer = new StreamWriter(filename);
             writer.WriteLine(imgPath);
             writer.WriteLine(_size);
+            writer.WriteLine(_isShuffle);
             // Theo sau la ma tran bieu dien game
             for (int i = 0; i < _size; i++)
             {
@@ -683,6 +686,13 @@ namespace Project2_PuzzleGame
             image_cropped = new Image[_size, _size];
             _imageCheck = new int[_size, _size];
             imgPath = firstLine;
+            var shuffle = reader.ReadLine();
+            if (shuffle == "True")
+                _isShuffle=true;
+            else
+            {
+                _isShuffle = false;
+            }
             for (int i = 0; i < _size; i++)
             {
                 var tokens = reader.ReadLine().Split(
