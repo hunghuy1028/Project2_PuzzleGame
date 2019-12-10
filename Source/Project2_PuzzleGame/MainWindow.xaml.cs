@@ -500,90 +500,99 @@ namespace Project2_PuzzleGame
 
         private void LoadGame_MenuItem_Click(object sender, RoutedEventArgs e)
         {
-            restartbtn(_size);
+            
             var filename = "save.txt";
-            var reader = new StreamReader(filename);
-            var firstLine = reader.ReadLine();
-            var size = int.Parse(reader.ReadLine());
-            _size = size;
-            width = 300 / _size;
-            height = 300 / _size;
-            image_cropped = new Image[_size, _size];
-            _imageCheck = new int[_size, _size];
-            imgPath = firstLine;
-            var shuffle = reader.ReadLine();
-            if (shuffle == "True")
-                _isShuffle = true;
-            else
-            {
-                _isShuffle = false;
-            }
-            for (int i = 0; i < _size; i++)
-            {
-                var tokens = reader.ReadLine().Split(
-                    new string[] { " " }, StringSplitOptions.None);
-                // Model
+            try { 
 
-                for (int j = 0; j < _size; j++)
+                var reader=new StreamReader(filename);
+                restartbtn(_size);
+                var firstLine = reader.ReadLine();
+                var size = int.Parse(reader.ReadLine());
+                _size = size;
+                width = 300 / _size;
+                height = 300 / _size;
+                image_cropped = new Image[_size, _size];
+                _imageCheck = new int[_size, _size];
+                imgPath = firstLine;
+                var shuffle = reader.ReadLine();
+                if (shuffle == "True")
+                    _isShuffle = true;
+                else
                 {
-                    _imageCheck[i, j] = int.Parse(tokens[j]);
+                    _isShuffle = false;
                 }
-            }
-            reader.Close();
-
-            var source = new BitmapImage(
-                new Uri(firstLine, UriKind.Absolute));
-            Debug.WriteLine($"{source.Width} - {source.Height}");
-            newGame_image = source;
-
-            previewImage.Width = 350;
-            previewImage.Height = 280;
-            previewImage.Source = source;
-
-            Canvas.SetLeft(previewImage, 400);
-            Canvas.SetTop(previewImage, 0);
-
-            for (int i = 0; i < _size; i++)
-            {
-                for (int j = 0; j < _size; j++)
+                for (int i = 0; i < _size; i++)
                 {
-                    if (!((i == _size - 1) && (j == _size - 1)))
-                    {
-                        int h, w;
-                        if ((int)source.Height < (int)source.Width)
-                        {
-                            h = (int)source.Height / _size;
-                            w = (int)source.Height / _size;
-                        }
-                        else
-                        {
-                            h = (int)source.Width / _size;
-                            w = (int)source.Width / _size;
-                        }
-                        //Debug.WriteLine($"Len = {len}");
-                        var rect = new Int32Rect(i * w, j * h, w, h);
-                        var cropBitmap = new CroppedBitmap(source,
-                            rect);
+                    var tokens = reader.ReadLine().Split(
+                        new string[] { " " }, StringSplitOptions.None);
+                    // Model
 
-                        var cropImage = new Image();
-                        cropImage.Stretch = Stretch.Fill;
-                        cropImage.Width = width;
-                        cropImage.Height = height;
-                        cropImage.Source = cropBitmap;
-                        var img_pos = imgPos(_imageCheck, _size, _size * i + j);
-                        int t1 = img_pos.Item1;
-                        int t2 = img_pos.Item2;
-                        image_cropped[t1, t2] = cropImage;
-                        canvas.Children.Add(cropImage);
-                        Canvas.SetLeft(cropImage, startX + t1 * (width + 2));
-                        Canvas.SetTop(cropImage, startY + t2 * (height + 2));
-                        cropImage.MouseLeftButtonDown += CropImage_MouseLeftButtonDown;
-                        cropImage.PreviewMouseLeftButtonUp += CropImage_PreviewMouseLeftButtonUp;
-                        cropImage.Tag = new Tuple<int, int>(i, j);
+                    for (int j = 0; j < _size; j++)
+                    {
+                        _imageCheck[i, j] = int.Parse(tokens[j]);
                     }
                 }
+                reader.Close();
+
+                var source = new BitmapImage(
+                    new Uri(firstLine, UriKind.Absolute));
+                Debug.WriteLine($"{source.Width} - {source.Height}");
+                newGame_image = source;
+
+                previewImage.Width = 350;
+                previewImage.Height = 280;
+                previewImage.Source = source;
+
+                Canvas.SetLeft(previewImage, 400);
+                Canvas.SetTop(previewImage, 0);
+
+                for (int i = 0; i < _size; i++)
+                {
+                    for (int j = 0; j < _size; j++)
+                    {
+                        if (!((i == _size - 1) && (j == _size - 1)))
+                        {
+                            int h, w;
+                            if ((int)source.Height < (int)source.Width)
+                            {
+                                h = (int)source.Height / _size;
+                                w = (int)source.Height / _size;
+                            }
+                            else
+                            {
+                                h = (int)source.Width / _size;
+                                w = (int)source.Width / _size;
+                            }
+                            //Debug.WriteLine($"Len = {len}");
+                            var rect = new Int32Rect(i * w, j * h, w, h);
+                            var cropBitmap = new CroppedBitmap(source,
+                                rect);
+
+                            var cropImage = new Image();
+                            cropImage.Stretch = Stretch.Fill;
+                            cropImage.Width = width;
+                            cropImage.Height = height;
+                            cropImage.Source = cropBitmap;
+                            var img_pos = imgPos(_imageCheck, _size, _size * i + j);
+                            int t1 = img_pos.Item1;
+                            int t2 = img_pos.Item2;
+                            image_cropped[t1, t2] = cropImage;
+                            canvas.Children.Add(cropImage);
+                            Canvas.SetLeft(cropImage, startX + t1 * (width + 2));
+                            Canvas.SetTop(cropImage, startY + t2 * (height + 2));
+                            cropImage.MouseLeftButtonDown += CropImage_MouseLeftButtonDown;
+                            cropImage.PreviewMouseLeftButtonUp += CropImage_PreviewMouseLeftButtonUp;
+                            cropImage.Tag = new Tuple<int, int>(i, j);
+                        }
+                    }
+                }
+                _canplay = true;
             }
-            _canplay = true;
+            catch
+            {
+                MessageBox.Show("You haven't saved game yet!!");
+            }
+            
         }
 
         private void NewGame_Click(object sender, RoutedEventArgs e)

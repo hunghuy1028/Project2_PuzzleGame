@@ -1,6 +1,0 @@
-C:\Users\Dell\source\repos\Code_HK1_2019_2020\Code_C#\WindowsPrograming\Do_an\Do_an2\Project2_PuzzleGame\Project2_PuzzleGame\bin\Debug\Images\a.jpg
-3
-True
-4 -1 6
-5 3 2
-7 0 1
