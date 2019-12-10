@@ -131,7 +131,6 @@ namespace Project2_PuzzleGame
             }
         }
 
-        bool isValidDrag;
         private void CropImage_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             if (_selectedBitmap != null && _canplay!= false)
@@ -150,7 +149,7 @@ namespace Project2_PuzzleGame
                 pos_x1 = (int)(_lastPosition2.X - startX) / (width + 2);
                 pos_y1 = (int)(_lastPosition2.Y - startY) / (height + 2);
 
-                
+                bool isValidDrag;
                 if (pos_x < _size && pos_y < _size)
                 {
                     isValidDrag = true;
@@ -174,8 +173,6 @@ namespace Project2_PuzzleGame
                     isValidDrag = false;
                 }
                 
-                if(_lastPosition.X>340)
-
                 if (!isValidDrag)
                 {
                     x = (int)(_lastPosition2.X - startX) / (width + 2) * (width + 2) + startX;
@@ -192,8 +189,10 @@ namespace Project2_PuzzleGame
 
                 if (isValidDrag && checkWin(_imageCheck, _size))
                 {
+                    var playtime = Timing.Content.ToString();
                     StopTime();
-                    MessageBox.Show("You Win!");
+                    MessageBox.Show("You Win!\n"+$"Time: {playtime}", "Congratulation"); 
+                    _isShuffle = false;
                 }
             }
 
@@ -227,8 +226,6 @@ namespace Project2_PuzzleGame
         private void Window_MouseMove(object sender, MouseEventArgs e)
         {
 
-            //rawTable();
-
             var position = e.GetPosition(this);
 
             int i = ((int)position.Y - startY) / height;
@@ -247,39 +244,6 @@ namespace Project2_PuzzleGame
                 Canvas.SetTop(_selectedBitmap, lastTop + dy);
 
                 _lastPosition = position;
-            }
-        }
-
-        public void rawTable()
-        {
-            // vẽ số cột
-            for (int i = 0; i <= _size; i++)
-            {
-                var line = new Line();
-                line.StrokeThickness = 1;
-                line.Stroke = new SolidColorBrush(Colors.Red);
-                canvas.Children.Add(line);
-
-                line.X1 = startX-1 + i * (width+2);
-                line.Y1 = startY-1;
-
-                line.X2 = startX-1 + i * (width+2);
-                line.Y2 = startY-1 + _size * (height+2);
-
-            }
-            // vẽ số dòng
-            for (int i = 0; i <= _size; i++)
-            {
-                var line = new Line();
-                line.StrokeThickness = 1;
-                line.Stroke = new SolidColorBrush(Colors.Red);
-                canvas.Children.Add(line);
-
-                line.X1 = startX-1;
-                line.Y1 = startY-1 + i * (2+height);
-
-                line.X2 = startX-1 + _size * (width+2);
-                line.Y2 = startY -1+ i * (height+2);
             }
         }
 
@@ -402,9 +366,15 @@ namespace Project2_PuzzleGame
                 }
                 if (checkWin(_imageCheck, _size))
                 {
+                    var playtime = Timing.Content.ToString();
                     StopTime();
-                    MessageBox.Show("You Win!","Congratulation");
+                    MessageBox.Show("You Win!\n" + $"Time: {playtime}", "Congratulation");
+                    _isShuffle = false;
                 }
+            }
+            else
+            {
+                MessageBox.Show("Shuffle make game more fun ^^", "Message");
             }
         }
 
