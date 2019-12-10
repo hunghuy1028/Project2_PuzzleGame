@@ -77,14 +77,14 @@ namespace Project2_PuzzleGame
                     Level_GameMode = int.Parse(UserMode_TextBox.Text);
 
                 }
-                if (Level_GameMode > 1)
+                if (Level_GameMode > 1 && Level_GameMode <=20)
                 {
                     DialogResult = true;
                     Close();
                 }
                 else
                 {
-                    MessageBox.Show("You need input a number > 1");
+                    MessageBox.Show("Please enter level between from 2 to 20", "Message");
                 }
             }
             catch

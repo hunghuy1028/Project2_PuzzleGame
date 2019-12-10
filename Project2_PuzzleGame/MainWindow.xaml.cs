@@ -178,7 +178,7 @@ namespace Project2_PuzzleGame
                 pos_y1 = (int)(_lastPosition2.Y - startY) / (height + 2);
 
                 bool isValidDrag;
-                if (pos_x < _size && pos_y < _size)
+                if (pos_x < _size && pos_y < _size && position.X < this.ActualWidth  && position.Y < this.ActualHeight )
                 {
                     isValidDrag = true;
                     if (_imageCheck[pos_x, pos_y] == -1)
@@ -219,7 +219,15 @@ namespace Project2_PuzzleGame
                 {
                     var playtime = Timing.Content.ToString();
                     StopTime();
-                    MessageBox.Show("You Win!\n"+$"Time: {playtime}", "Congratulation"); 
+                    if (time_gameMode == 1)
+                    {
+                        MessageBox.Show("You Win!\n" + $"Time: {playtime}", "Congratulation");
+                    }
+                    else if (time_gameMode == 2)
+                    {
+                        int temp = 180 - timeCountDown;
+                        MessageBox.Show(string.Format($"You Win!\n Time 0{temp / 60}:{temp % 60} s"), "Congratulation");
+                    }
                     _isShuffle = false;
                 }
             }
@@ -234,7 +242,7 @@ namespace Project2_PuzzleGame
             int i = ((int)position.Y - startY) / height;
             int j = ((int)position.X - startX) / width;
 
-            this.Title = $"{position.X} - {position.Y}, a[{i}][{j}]";
+            //this.Title = $"{position.X} - {position.Y}, a[{i}][{j}]";
 
             if (_isDragging)
             {
@@ -342,11 +350,11 @@ namespace Project2_PuzzleGame
                 _imageCheck = new int[_size, _size];
                 if (time_gameMode == 1)
                 {
-                    Timing.Content = "00:00:00";
+                    Timing.Content = "00:00";
                 }
                 else if (time_gameMode == 2)
                 {
-                    Timing.Content = "   03:00";
+                    Timing.Content = "03:00";
                 }
 
                 newGame();
@@ -363,6 +371,230 @@ namespace Project2_PuzzleGame
         {
             MessageBox.Show("8 Puzzle Game\n1712472 - Lo Huy Hung\n1712555 - Chau Vinh Lap", "Information");
 
+        }
+
+        private void Window_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (_isShuffle && _canplay)
+            {
+                Start_Click(sender, e);
+                if (e.Key == Key.Up)
+                {
+                    MoveUp();
+                }
+                if (e.Key == Key.Down)
+                {
+                    MoveDown();
+                }
+                if (e.Key == Key.Left)
+                {
+                    MoveLeft();
+                }
+                if (e.Key == Key.Right)
+                {
+                    MoveRight();
+                }
+                if (checkWin(_imageCheck, _size))
+                {
+                    var playtime = Timing.Content.ToString();
+                    StopTime();
+                    if (time_gameMode == 1)
+                    {
+                        MessageBox.Show("You Win!\n" + $"Time: {playtime}", "Congratulation");
+                    }
+                    else if (time_gameMode == 2)
+                    {
+                        int temp = 180 - timeCountDown;
+                        MessageBox.Show(string.Format($"You Win!\n Time 0{temp / 60}:{temp % 60} s"), "Congratulation");
+                    }
+                    _isShuffle = false;
+                }
+            }
+            else
+            {
+                MessageBox.Show("Shuffle make game more fun ^^", "Message");
+            }
+        }
+
+        private void Shuffle_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if (_canplay)
+                {
+                    StopTime();
+                    var random = new Random();
+                    bool isShuffle = false;
+                    do
+                    {
+                        for (int i = 0; i < 1280; i++)
+                        {
+                            int x = random.Next(2000);
+                            x %= 4;
+                            if (x == 0)
+                            {
+                                MoveUp();
+                            }
+                            if (x == 1)
+                            {
+                                MoveLeft();
+                            }
+                            if (x == 2)
+                            {
+                                MoveRight();
+                            }
+                            if (x == 3)
+                            {
+                                MoveDown();
+                            }
+                        }
+                        int count = 0;
+                        for (int j = 0; j < _size; j++)
+                        {
+                            if (_imageCheck[0, j] == j)
+                                count++;
+                        }
+                        if (count == _size) isShuffle = true;
+                        else isShuffle = false;
+                    } while (isShuffle);
+                    _isShuffle = true;
+                }
+            }
+            catch
+            {
+                MessageBox.Show("Please choose image first");
+            }
+        }
+
+        private void SaveGame_MenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            if (_canplay)
+            {
+               
+                const string filename = "save.txt";
+                var writer = new StreamWriter(filename);
+                writer.WriteLine(imgPath);
+                writer.WriteLine(_size);
+                writer.WriteLine(_isShuffle);
+                // Theo sau la ma tran bieu dien game
+                for (int i = 0; i < _size; i++)
+                {
+                    for (int j = 0; j < _size; j++)
+                    {
+                        writer.Write($"{_imageCheck[i, j]}");
+                        if (j != _size - 1)
+                        {
+                            writer.Write(" ");
+                        }
+                    }
+                    writer.WriteLine("");
+                }
+                writer.Close();
+
+                MessageBox.Show("Game saved");
+            }
+        }
+
+        private void LoadGame_MenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            restartbtn(_size);
+            var filename = "save.txt";
+            var reader = new StreamReader(filename);
+            var firstLine = reader.ReadLine();
+            var size = int.Parse(reader.ReadLine());
+            _size = size;
+            width = 300 / _size;
+            height = 300 / _size;
+            image_cropped = new Image[_size, _size];
+            _imageCheck = new int[_size, _size];
+            imgPath = firstLine;
+            var shuffle = reader.ReadLine();
+            if (shuffle == "True")
+                _isShuffle = true;
+            else
+            {
+                _isShuffle = false;
+            }
+            for (int i = 0; i < _size; i++)
+            {
+                var tokens = reader.ReadLine().Split(
+                    new string[] { " " }, StringSplitOptions.None);
+                // Model
+
+                for (int j = 0; j < _size; j++)
+                {
+                    _imageCheck[i, j] = int.Parse(tokens[j]);
+                }
+            }
+            reader.Close();
+
+            var source = new BitmapImage(
+                new Uri(firstLine, UriKind.Absolute));
+            Debug.WriteLine($"{source.Width} - {source.Height}");
+            newGame_image = source;
+
+            previewImage.Width = 350;
+            previewImage.Height = 280;
+            previewImage.Source = source;
+
+            Canvas.SetLeft(previewImage, 400);
+            Canvas.SetTop(previewImage, 0);
+
+            for (int i = 0; i < _size; i++)
+            {
+                for (int j = 0; j < _size; j++)
+                {
+                    if (!((i == _size - 1) && (j == _size - 1)))
+                    {
+                        int h, w;
+                        if ((int)source.Height < (int)source.Width)
+                        {
+                            h = (int)source.Height / _size;
+                            w = (int)source.Height / _size;
+                        }
+                        else
+                        {
+                            h = (int)source.Width / _size;
+                            w = (int)source.Width / _size;
+                        }
+                        //Debug.WriteLine($"Len = {len}");
+                        var rect = new Int32Rect(i * w, j * h, w, h);
+                        var cropBitmap = new CroppedBitmap(source,
+                            rect);
+
+                        var cropImage = new Image();
+                        cropImage.Stretch = Stretch.Fill;
+                        cropImage.Width = width;
+                        cropImage.Height = height;
+                        cropImage.Source = cropBitmap;
+                        var img_pos = imgPos(_imageCheck, _size, _size * i + j);
+                        int t1 = img_pos.Item1;
+                        int t2 = img_pos.Item2;
+                        image_cropped[t1, t2] = cropImage;
+                        canvas.Children.Add(cropImage);
+                        Canvas.SetLeft(cropImage, startX + t1 * (width + 2));
+                        Canvas.SetTop(cropImage, startY + t2 * (height + 2));
+                        cropImage.MouseLeftButtonDown += CropImage_MouseLeftButtonDown;
+                        cropImage.PreviewMouseLeftButtonUp += CropImage_PreviewMouseLeftButtonUp;
+                        cropImage.Tag = new Tuple<int, int>(i, j);
+                    }
+                }
+            }
+            _canplay = true;
+        }
+
+        private void NewGame_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if (_canplay)
+                {
+                    restartbtn(_size);
+                    newGame();
+                }
+            }
+            catch
+            { MessageBox.Show("Please choose image first"); }
         }
 
         private void MoveUp()
@@ -441,90 +673,6 @@ namespace Project2_PuzzleGame
             }
         }
 
-        private void Window_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (_isShuffle && _canplay)
-            {
-                Start_Click(sender, e);
-                if (e.Key == Key.Up)
-                {
-                    MoveUp();
-                }
-                if (e.Key == Key.Down)
-                {
-                    MoveDown();
-                }
-                if (e.Key == Key.Left)
-                {
-                    MoveLeft();
-                }
-                if (e.Key == Key.Right)
-                {
-                    MoveRight();
-                }
-                if (checkWin(_imageCheck, _size))
-                {
-                    var playtime = Timing.Content.ToString();
-                    StopTime();
-                    MessageBox.Show("You Win!\n" + $"Time: {playtime}", "Congratulation");
-                    _isShuffle = false;
-                }
-            }
-            else
-            {
-                MessageBox.Show("Shuffle make game more fun ^^", "Message");
-            }
-        }
-
-        private void Shuffle_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                if (_canplay)
-                {
-                    StopTime();
-                    var random = new Random();
-                    bool isShuffle = false;
-                    do
-                    {
-                        for (int i = 0; i < 1280; i++)
-                        {
-                            int x = random.Next(2000);
-                            x %= 4;
-                            if (x == 0)
-                            {
-                                MoveUp();
-                            }
-                            if (x == 1)
-                            {
-                                MoveLeft();
-                            }
-                            if (x == 2)
-                            {
-                                MoveRight();
-                            }
-                            if (x == 3)
-                            {
-                                MoveDown();
-                            }
-                        }
-                        int count = 0;
-                        for (int j = 0; j < _size; j++)
-                        {
-                            if (_imageCheck[0, j] == j)
-                                count++;
-                        }
-                        if (count == _size) isShuffle = true;
-                        else isShuffle = false;
-                    } while (isShuffle);
-                    _isShuffle = true;
-                }
-            }catch
-            {
-                MessageBox.Show("Please choose image first");
-            }
-        }
-
         private static bool checkWin(int[,] a, int size)
         {
             for (int i = 0; i < size; i++)
@@ -552,7 +700,7 @@ namespace Project2_PuzzleGame
                 MessageBox.Show("Better luck next time ^^");
                 countdown.Stop();
                 timeCountDown = 180;
-                Timing.Content = "   03:00";
+                Timing.Content = "03:00";
             }
         }
 
@@ -561,8 +709,8 @@ namespace Project2_PuzzleGame
             if (stopWatch.IsRunning)
             {
                 TimeSpan ts = stopWatch.Elapsed;
-                currentTime = String.Format("{0:00}:{1:00}:{2:00}",
-                ts.Minutes, ts.Seconds, ts.Milliseconds / 10);
+                currentTime = String.Format("{0:00}:{1:00}",
+                ts.Minutes, ts.Seconds);
                 Timing.Content = currentTime;
             }
         }
@@ -571,7 +719,7 @@ namespace Project2_PuzzleGame
         {
             if (_canplay)
             {
-                
+
                 if (_isShuffle)
                 {
                     if (time_gameMode == 1)
@@ -579,7 +727,7 @@ namespace Project2_PuzzleGame
                         stopWatch.Start();
                         dispatcherTimer.Start();
                     }
-                    else if (time_gameMode ==2)
+                    else if (time_gameMode == 2)
                     {
                         countdown.Start();
                     }
@@ -605,21 +753,7 @@ namespace Project2_PuzzleGame
                 countdown.Stop();
             }
             stopWatch.Reset();
-            Timing.Content = "00:00:00";
-        }
-
-        private void NewGame_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                if (_canplay)
-                {
-                    restartbtn(_size);
-                    newGame();
-                }
-            }
-            catch
-            { MessageBox.Show("Please choose image first"); }
+            Timing.Content = "00:00";
         }
 
         public void restartbtn(int row)
@@ -632,122 +766,6 @@ namespace Project2_PuzzleGame
                         image_cropped[i, j].Source = null;
                 }
             }
-        }
-
-        private void SaveGame_MenuItem_Click(object sender, RoutedEventArgs e)
-        {
-            if (_canplay)
-            {
-            const string filename = "save.txt";
-            var writer = new StreamWriter(filename);
-            writer.WriteLine(imgPath);
-            writer.WriteLine(_size);
-            writer.WriteLine(_isShuffle);
-            // Theo sau la ma tran bieu dien game
-            for (int i = 0; i < _size; i++)
-            {
-                for (int j = 0; j < _size; j++)
-                {
-                    writer.Write($"{_imageCheck[i, j]}");
-                    if (j != _size - 1)
-                    {
-                        writer.Write(" ");
-                    }
-                }
-                writer.WriteLine("");
-            }
-            writer.Close();
-
-            MessageBox.Show("Game saved");
-            }
-        }
-
-        private void LoadGame_MenuItem_Click(object sender, RoutedEventArgs e)
-        {
-            restartbtn(_size);
-            var filename = "save.txt";
-            var reader = new StreamReader(filename);
-            var firstLine = reader.ReadLine();
-            var size = int.Parse(reader.ReadLine());
-            _size = size;
-            width = 300 / _size;
-            height = 300 / _size;
-            image_cropped = new Image[_size, _size];
-            _imageCheck = new int[_size, _size];
-            imgPath = firstLine;
-            var shuffle = reader.ReadLine();
-            if (shuffle == "True")
-                _isShuffle=true;
-            else
-            {
-                _isShuffle = false;
-            }
-            for (int i = 0; i < _size; i++)
-            {
-                var tokens = reader.ReadLine().Split(
-                    new string[] { " " }, StringSplitOptions.None);
-                // Model
-
-                for (int j = 0; j < _size; j++)
-                {
-                    _imageCheck[i, j] = int.Parse(tokens[j]);
-                }
-            }
-            reader.Close();
-
-            var source = new BitmapImage(
-                new Uri(firstLine, UriKind.Absolute));
-            Debug.WriteLine($"{source.Width} - {source.Height}");
-            newGame_image = source;
-
-            previewImage.Width = 350;
-            previewImage.Height = 280;
-            previewImage.Source = source;
-
-            Canvas.SetLeft(previewImage, 400);
-            Canvas.SetTop(previewImage, 0);
-
-            for (int i = 0; i < _size; i++)
-            {
-                for (int j = 0; j < _size; j++)
-                {
-                    if (!((i == _size-1) && (j == _size-1)))
-                    {
-                        int h, w;
-                        if ((int)source.Height < (int)source.Width)
-                        {
-                            h = (int)source.Height / _size;
-                            w = (int)source.Height / _size;
-                        }
-                        else
-                        {
-                            h = (int)source.Width / _size;
-                            w = (int)source.Width / _size;
-                        }
-                        //Debug.WriteLine($"Len = {len}");
-                        var rect = new Int32Rect(i * w, j * h, w, h);
-                        var cropBitmap = new CroppedBitmap(source,
-                            rect);
-
-                        var cropImage = new Image();
-                        cropImage.Stretch = Stretch.Fill;
-                        cropImage.Width = width;
-                        cropImage.Height = height;
-                        cropImage.Source = cropBitmap;
-                        var img_pos = imgPos(_imageCheck, _size, _size * i + j);
-                        int t1 = img_pos.Item1;
-                        int t2 = img_pos.Item2;
-                        image_cropped[t1, t2] = cropImage;
-                        canvas.Children.Add(cropImage);
-                        Canvas.SetLeft(cropImage, startX + t1 * (width + 2));
-                        Canvas.SetTop(cropImage, startY + t2 * (height + 2));
-                        cropImage.MouseLeftButtonDown += CropImage_MouseLeftButtonDown;
-                        cropImage.PreviewMouseLeftButtonUp += CropImage_PreviewMouseLeftButtonUp;
-                        cropImage.Tag = new Tuple<int, int>(i, j);
-                    }
-                }
-            }
-            _canplay = true;
         }
 
         private static Tuple<int, int> imgPos(int[,] a, int size, int pos)
